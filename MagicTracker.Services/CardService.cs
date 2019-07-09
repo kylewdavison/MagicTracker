@@ -35,7 +35,7 @@ namespace MagicTracker.Services
             }
         }
 
-/*        public void FindCardWithApi(Card card)
+        public void FindCardWithApi(Card card)
         {
             List<mtgCard.Card> listOfResults = new List<mtgCard.Card>();
             mtgService.CardService apiService = new mtgService.CardService();
@@ -49,7 +49,7 @@ namespace MagicTracker.Services
 
 
 
-        }*/
+        }
 
         public IEnumerable<CollectionItem> GetCollection()
         {

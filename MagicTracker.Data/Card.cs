@@ -25,6 +25,7 @@ namespace MagicTracker.Data
         //[ForeignKey("MultiverseId")]
         public int MultiverseId { get; set; }
         public string Name { get; set; }
+        public string Printing { get; set; }
         public Condition CardCondition { get; set; }
         public bool IsFoil { get; set; }
         public bool InUse { get; set; }

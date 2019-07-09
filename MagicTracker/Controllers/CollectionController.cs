@@ -36,11 +36,23 @@ namespace MagicTracker.Controllers
                 return View(model);
             }
 
+            var service = CreateCardService();
+            
+            if (service.CreateCard(model))
+            {
+                TempData["SaveResult"] = "Your card was created.";
+                return RedirectToAction("Index");
+            };
+
+            ModelState.AddModelError("", "Card could not be found.");
+            return View(model);
+        }
+
+        private CardService CreateCardService()
+        {
             var userId = Guid.Parse(User.Identity.GetUserId());
             var service = new CardService(userId);
-
-            service.CreateCard(model);
-            return RedirectToAction("Index");
+            return service;
         }
     }
 }
