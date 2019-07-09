@@ -48,6 +48,14 @@ namespace MagicTracker.Controllers
             return View(model);
         }
 
+        public ActionResult Details(int id)
+        {
+            var svc = CreateCardService();
+            var model = svc.GetCardById(id);
+
+            return View(model);
+        }
+
         private CardService CreateCardService()
         {
             var userId = Guid.Parse(User.Identity.GetUserId());

@@ -55,7 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CardCreate.cs" />
-    <Compile Include="CardInfoCreation.cs" />
+    <Compile Include="CardDetail.cs" />
     <Compile Include="CollectionItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

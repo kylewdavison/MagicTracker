@@ -46,9 +46,6 @@ namespace MagicTracker.Services
             {
                 var sets = searchResults.Value[0].Printings;
             }
-
-
-
         }
 
         public IEnumerable<CollectionItem> GetCollection()
@@ -67,6 +64,30 @@ namespace MagicTracker.Services
                             }
                     );
                 return query.ToArray();
+            }
+        }
+
+        public CardDetail GetCardById(int id)
+        {
+            using (var ctx = new ApplicationDbContext())
+            {
+                
+                var entity =
+                    ctx
+                        .Cards
+                        .Single(e => e.CardId == id && e.OwnerId == _userId);
+                return
+                    new CardDetail
+                    {
+                        CardId = entity.CardId,
+                        Name = entity.Name,
+                        Printing = entity.Printing,
+                        CardCondition = (Models.Condition)(int)entity.CardCondition,
+                        IsFoil = entity.IsFoil,
+                        InUse = entity.InUse,
+                        ForTrade = entity.ForTrade,
+                        Holder = entity.Holder
+                    };
             }
         }
     }
