@@ -19,7 +19,7 @@ namespace MagicTracker.Data
     public class Card
     {
         [Key]
-        public Guid CardId { get; set; }
+        public int CardId { get; set; }
         [Required]
         public Guid OwnerId { get; set; }
         //[ForeignKey("MultiverseId")]
