@@ -9,6 +9,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using MagicTracker.Models;
+using MagicTracker.Data;
 
 namespace MagicTracker.Controllers
 {

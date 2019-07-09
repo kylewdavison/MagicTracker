@@ -251,6 +251,20 @@
     <Content Include="Scripts\jquery-3.3.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.3.1.min.map" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MagicTracker.Data\MagicTracker.Data.csproj">
+      <Project>{e90cea0c-2dfe-410a-afe1-ba4c458c9b0e}</Project>
+      <Name>MagicTracker.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MagicTracker.Models\MagicTracker.Models.csproj">
+      <Project>{962e0209-4383-4967-b7f1-9b706f538b84}</Project>
+      <Name>MagicTracker.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MagicTracker.Services\MagicTracker.Services.csproj">
+      <Project>{c4a0f541-8a70-4da2-9aef-90c346972806}</Project>
+      <Name>MagicTracker.Services</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
