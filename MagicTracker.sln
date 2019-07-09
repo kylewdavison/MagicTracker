@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MagicTracker.Services", "Ma
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MagicTracker.Contracts", "MagicTracker.Contracts\MagicTracker.Contracts.csproj", "{F3B4E16B-EC31-40ED-93E6-E230CAB2D11F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MagicTracker.Tests", "MagicTracker.Tests\MagicTracker.Tests.csproj", "{5A34D9C0-BF80-49C2-91C9-2C3ABDA2A098}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{F3B4E16B-EC31-40ED-93E6-E230CAB2D11F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F3B4E16B-EC31-40ED-93E6-E230CAB2D11F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F3B4E16B-EC31-40ED-93E6-E230CAB2D11F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A34D9C0-BF80-49C2-91C9-2C3ABDA2A098}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A34D9C0-BF80-49C2-91C9-2C3ABDA2A098}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A34D9C0-BF80-49C2-91C9-2C3ABDA2A098}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A34D9C0-BF80-49C2-91C9-2C3ABDA2A098}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

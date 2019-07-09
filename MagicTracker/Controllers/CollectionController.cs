@@ -1,4 +1,6 @@
 ﻿using MagicTracker.Models;
+using MagicTracker.Services;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +15,9 @@ namespace MagicTracker.Controllers
         // GET: Collection
         public ActionResult Index()
         {
-            var model = new CollectionItem[0];
+            var userId = Guid.Parse(User.Identity.GetUserId());
+            var service = new CardService(userId);
+            var model = service.GetCollection();
             return View(model);
         }
 
@@ -27,11 +31,16 @@ namespace MagicTracker.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(CardCreate model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-
+                return View(model);
             }
-            return View(model);
+
+            var userId = Guid.Parse(User.Identity.GetUserId());
+            var service = new CardService(userId);
+
+            service.CreateCard(model);
+            return RedirectToAction("Index");
         }
     }
 }

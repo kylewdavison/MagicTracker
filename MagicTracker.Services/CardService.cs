@@ -1,10 +1,13 @@
 ﻿using MagicTracker.Data;
 using MagicTracker.Models;
+using mtgCard = MtgApiManager.Lib.Model;
+using mtgService = MtgApiManager.Lib.Service;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Card = MagicTracker.Data.Card;
 
 namespace MagicTracker.Services
 {
@@ -31,6 +34,22 @@ namespace MagicTracker.Services
                 return ctx.SaveChanges() == 1;
             }
         }
+
+/*        public void FindCardWithApi(Card card)
+        {
+            List<mtgCard.Card> listOfResults = new List<mtgCard.Card>();
+            mtgService.CardService apiService = new mtgService.CardService();
+
+            var searchResults = apiService.Where(x => x.Name, card.Name)
+                .All();
+            if (searchResults.Value.Count != 0)
+            {
+                var sets = searchResults.Value[0].Printings;
+            }
+
+
+
+        }*/
 
         public IEnumerable<CollectionItem> GetCollection()
         {

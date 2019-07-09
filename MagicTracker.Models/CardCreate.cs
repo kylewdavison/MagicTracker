@@ -13,6 +13,6 @@ namespace MagicTracker.Models
         [MinLength(3, ErrorMessage = "Please enter at least 3 characters.")]
         [MaxLength(40, ErrorMessage = "There are too many characters in this field.")]
         public string CardName { get; set; }
-        public int MultiverseId { get; set; }
+        //public int MultiverseId { get; set; }
     }
 }
