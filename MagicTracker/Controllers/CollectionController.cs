@@ -56,6 +56,23 @@ namespace MagicTracker.Controllers
             return View(model);
         }
 
+        public ActionResult Edit(int id)
+        {
+            var service = CreateCardService();
+            var detail = service.GetCardById(id);
+            var model = new CardEdit
+            {
+                CardId = detail.CardId,
+                Name = detail.Name,
+                Printing = detail.Printing,
+                CardCondition = (Models.Condition)(int)detail.CardCondition,
+                IsFoil = detail.IsFoil,
+                InUse = detail.InUse,
+                ForTrade = detail.ForTrade
+            };
+            return View(model);
+        }
+
         private CardService CreateCardService()
         {
             var userId = Guid.Parse(User.Identity.GetUserId());

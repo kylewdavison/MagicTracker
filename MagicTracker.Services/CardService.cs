@@ -90,5 +90,25 @@ namespace MagicTracker.Services
                     };
             }
         }
+
+        public bool UpdateCard(CardEdit model)
+        {
+            using (var ctx = new ApplicationDbContext())
+            {
+                var entity = ctx
+                    .Cards
+                    .Single(e => e.CardId == model.CardId && e.OwnerId == _userId);
+
+                entity.Name = model.Name;
+                entity.Printing = model.Printing;
+                entity.CardCondition = (Data.Condition)(int)model.CardCondition;
+                entity.IsFoil = model.IsFoil;
+                entity.InUse = model.InUse;
+                entity.ForTrade = model.ForTrade;
+                entity.MultiverseId = model.MultiverseId;
+
+                return ctx.SaveChanges() == 1;
+            }
+        }
     }
 }
