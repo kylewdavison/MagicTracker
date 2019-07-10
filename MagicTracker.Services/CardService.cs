@@ -113,27 +113,36 @@ namespace MagicTracker.Services
             }
         }
 
-        public void UpdateCards(CardDetailMultiple models)
+        public bool UpdateCards(CardDetailMultiple models)
         {
-            List<CardEdit> listOfCards = new List<CardEdit>();
-            var collection = GetCollection();
-            foreach(var entry in collection)
+            
+
+            using (var ctx = new ApplicationDbContext())
             {
-                var card = GetCardById(entry.CardId);
-                var cardEdit = new CardEdit
+                foreach (var entry in models.CardList)
                 {
-                    CardId = card.CardId,
-                    Name = card.Name,
-                    Printing = card.Printing,
-                    CardCondition = (Models.Condition)(int)card.CardCondition,
-                    IsFoil = card.IsFoil,
-                    InUse = card.InUse,
-                    ForTrade = card.ForTrade,
-                    MultiverseId = card.MultiverseId,
-                    Holder = card.Holder
-                };
-                listOfCards.Add(cardEdit);
+                    var card = GetCardById(entry.CardId);
+                    /*var cardEdit = new CardEdit*/
+                    var entity = ctx
+                    .Cards
+                    .Single(e => e.CardId == entry.CardId && e.OwnerId == _userId);
+                    {
+                        entity.CardId = card.CardId;
+                        entity.Name = card.Name;
+                        entity.Printing = card.Printing;
+                        entity.CardCondition = (Data.Condition)(int)card.CardCondition;
+                        entity.IsFoil = card.IsFoil;
+                        entity.InUse = card.InUse;
+                        entity.ForTrade = card.ForTrade;
+                        entity.MultiverseId = card.MultiverseId;
+                        entity.Holder = card.Holder;
+                    };
+                    /*listOfCards.Add(cardEdit);*/
+                }
+                
+                return ctx.SaveChanges() == 1;
             }
+                
         }
 
         public bool DeleteCard(int cardId)
