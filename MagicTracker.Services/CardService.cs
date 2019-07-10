@@ -86,7 +86,8 @@ namespace MagicTracker.Services
                         IsFoil = entity.IsFoil,
                         InUse = entity.InUse,
                         ForTrade = entity.ForTrade,
-                        Holder = entity.Holder
+                        Holder = entity.Holder,
+                        MultiverseId = entity.MultiverseId
                     };
             }
         }
@@ -106,6 +107,7 @@ namespace MagicTracker.Services
                 entity.InUse = model.InUse;
                 entity.ForTrade = model.ForTrade;
                 entity.MultiverseId = model.MultiverseId;
+                entity.Holder = model.Holder;
 
                 return ctx.SaveChanges() == 1;
             }

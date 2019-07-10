@@ -72,7 +72,32 @@ namespace MagicTracker.Controllers
             };
             return View(model);
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(int id, CardEdit model)
+        {
+            if (!ModelState.IsValid) return View(model);
 
+            if (model.CardId != id)
+            {
+                ModelState.AddModelError("", "Id Mismatch");
+                return View(model);
+            }
+
+            var service = CreateCardService();
+
+            if (service.UpdateCard(model))
+            {
+                TempData["SaveResult"] = "Your note was updated.";
+                return RedirectToAction("Index");
+            }
+
+            ModelState.AddModelError("", "Your note could not be updated.");
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         private CardService CreateCardService()
         {
             var userId = Guid.Parse(User.Identity.GetUserId());
