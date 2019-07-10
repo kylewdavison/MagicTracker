@@ -112,5 +112,44 @@ namespace MagicTracker.Services
                 return ctx.SaveChanges() == 1;
             }
         }
+
+        public void UpdateCards(CardDetailMultiple models)
+        {
+            List<CardEdit> listOfCards = new List<CardEdit>();
+            var collection = GetCollection();
+            foreach(var entry in collection)
+            {
+                var card = GetCardById(entry.CardId);
+                var cardEdit = new CardEdit
+                {
+                    CardId = card.CardId,
+                    Name = card.Name,
+                    Printing = card.Printing,
+                    CardCondition = (Models.Condition)(int)card.CardCondition,
+                    IsFoil = card.IsFoil,
+                    InUse = card.InUse,
+                    ForTrade = card.ForTrade,
+                    MultiverseId = card.MultiverseId,
+                    Holder = card.Holder
+                };
+                listOfCards.Add(cardEdit);
+            }
+        }
+
+        public bool DeleteCard(int cardId)
+        {
+            using (var ctx = new ApplicationDbContext())
+            {
+                var entity =
+                    ctx
+                        .Cards
+                        .Single(e => e.CardId == cardId && e.OwnerId == _userId);
+
+                ctx.Cards.Remove(entity);
+
+                return ctx.SaveChanges() == 1;
+            }
+        }
+
     }
 }

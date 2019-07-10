@@ -1,20 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using MagicTracker.Data;
+using MagicTracker.Models;
+using MagicTracker.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MtgApiManager.Lib.Model;
-using MtgApiManager.Lib.Service;
+using mtgCard = MtgApiManager.Lib.Model;
+using mtgService = MtgApiManager.Lib.Service;
 
 namespace MagicTracker.Tests
 {
     [TestClass]
     public class UnitTest1
     {
+        public Guid _userId = new Guid("5f0f4dfa-3ba8-4eb2-96c6-6150a278392e");
+
         [TestMethod]
         public void TestCardSearch()
         {
-            List<Card> listOfCards = new List<Card>();
-            CardService service = new CardService();
-            var result = service.Where(x => x.Name, "Lightning Bolt")
+            List<mtgCard.Card> listOfResults = new List<mtgCard.Card>();
+            mtgService.CardService apiService = new mtgService.CardService();
+            var result = apiService.Where(x => x.Name, "Lightning Bolt")
                 //.Where(x => x.Set, "c17")
                 .All();
             /*            foreach (var card in result.Value)
@@ -34,6 +40,26 @@ namespace MagicTracker.Tests
             }
             //Console.ReadLine();
 
+        }
+
+        [TestMethod]
+        public void GetCollection()
+        {
+            using (var ctx = new ApplicationDbContext())
+            {
+                var query = ctx
+                    .Cards
+                    .Where(e => e.OwnerId == _userId)
+                    .Select(
+                        e =>
+                            new CollectionItem
+                            {
+                                CardId = e.CardId,
+                                CardName = e.Name
+                            }
+                    );
+                var results = query.ToArray();
+            }
         }
     }
 }

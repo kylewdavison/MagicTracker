@@ -88,12 +88,35 @@ namespace MagicTracker.Controllers
 
             if (service.UpdateCard(model))
             {
-                TempData["SaveResult"] = "Your note was updated.";
+                TempData["SaveResult"] = "Your card was updated.";
                 return RedirectToAction("Index");
             }
 
-            ModelState.AddModelError("", "Your note could not be updated.");
+            ModelState.AddModelError("", "Your card could not be updated.");
             return View(model);
+        }
+
+        [ActionName("Delete")]
+        public ActionResult Delete(int id)
+        {
+            var svc = CreateCardService();
+            var model = svc.GetCardById(id);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeletePost(int id)
+        {
+            var service = CreateCardService();
+
+            service.DeleteCard(id);
+
+            TempData["SaveResult"] = "Your card was deleted";
+
+            return RedirectToAction("Index");
         }
 
         [HttpPost]
