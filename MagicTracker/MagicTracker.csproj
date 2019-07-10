@@ -240,6 +240,7 @@
     <Content Include="Views\Collection\Details.cshtml" />
     <Content Include="Views\Collection\Edit.cshtml" />
     <Content Include="Views\Collection\Delete.cshtml" />
+    <Content Include="Views\Collection\DetailsMultiple.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

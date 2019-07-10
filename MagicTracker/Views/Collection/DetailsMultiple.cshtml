@@ -1,0 +1,57 @@
+﻿@model MagicTracker.Models.CardDetailMultiple
+
+@{
+    ViewBag.Title = "DetailsMultiple";
+}
+
+<h2>DetailsMultiple</h2>
+
+<div>
+    <h4>CardDetailMultiple</h4>
+    <hr />
+    <dl class="dl-horizontal">
+    </dl>
+</div>
+
+<table class="table">
+    <tr>
+        <th>Name</th>
+        <th>Set</th>
+        <th>Card Condition</th>
+        <th>Foil</th>
+        <th>In Use</th>
+        <th>For Trade</th>
+        <th>Holder</th>
+    </tr>
+
+    @foreach (var item in Model.CardList)
+    {
+<tr>
+    <td>
+        @Html.DisplayFor(modelItem => item.Name)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Printing)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.CardCondition)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.IsFoil)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.InUse)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.ForTrade)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Holder)
+    </td>
+</tr>
+    }
+</table>
+    <p>
+        @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+        @Html.ActionLink("Back to List", "Index")
+    </p>

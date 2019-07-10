@@ -115,14 +115,11 @@ namespace MagicTracker.Services
 
         public bool UpdateCards(CardDetailMultiple models)
         {
-            
-
             using (var ctx = new ApplicationDbContext())
             {
                 foreach (var entry in models.CardList)
                 {
                     var card = GetCardById(entry.CardId);
-                    /*var cardEdit = new CardEdit*/
                     var entity = ctx
                     .Cards
                     .Single(e => e.CardId == entry.CardId && e.OwnerId == _userId);
@@ -137,7 +134,6 @@ namespace MagicTracker.Services
                         entity.MultiverseId = card.MultiverseId;
                         entity.Holder = card.Holder;
                     };
-                    /*listOfCards.Add(cardEdit);*/
                 }
                 
                 return ctx.SaveChanges() == 1;

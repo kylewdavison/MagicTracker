@@ -56,6 +56,37 @@ namespace MagicTracker.Controllers
             return View(model);
         }
 
+        public ActionResult DetailsMultiple()
+        {
+            var service = CreateCardService();
+            List<CardEdit> listOfCards = new List<CardEdit>();
+            var collection = service.GetCollection();
+            foreach (var entry in collection)
+            {
+                var card = service.GetCardById(entry.CardId);
+                var cardEdit = new CardEdit()
+                {
+                    CardId = card.CardId,
+                    Name = card.Name,
+                    Printing = card.Printing,
+                    CardCondition = (Models.Condition)(int)card.CardCondition,
+                    IsFoil = card.IsFoil,
+                    InUse = card.InUse,
+                    ForTrade = card.ForTrade,
+                    MultiverseId = card.MultiverseId,
+                    Holder = card.Holder,
+                };
+
+                listOfCards.Add(cardEdit);
+            }
+            var cardDetailsMultiple = new CardDetailMultiple()
+            {
+                CardList = listOfCards
+            };
+            return View(cardDetailsMultiple);
+
+        }
+
         public ActionResult Edit(int id)
         {
             var service = CreateCardService();
