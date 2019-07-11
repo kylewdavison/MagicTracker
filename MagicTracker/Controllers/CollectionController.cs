@@ -127,6 +127,61 @@ namespace MagicTracker.Controllers
             return View(model);
         }
 
+        public ActionResult EditMultiple()
+        {
+            var service = CreateCardService();
+            List<CardEdit> listOfCards = new List<CardEdit>();
+            var collection = service.GetCollection();
+            foreach (var entry in collection)
+            {
+                var card = service.GetCardById(entry.CardId);
+                var cardEdit = new CardEdit()
+                {
+                    CardId = card.CardId,
+                    Name = card.Name,
+                    Printing = card.Printing,
+                    CardCondition = (Models.Condition)(int)card.CardCondition,
+                    IsFoil = card.IsFoil,
+                    InUse = card.InUse,
+                    ForTrade = card.ForTrade,
+                    MultiverseId = card.MultiverseId,
+                    Holder = card.Holder,
+                };
+
+                listOfCards.Add(cardEdit);
+            }
+            var cardDetailsMultiple = new CardDetailMultiple()
+            {
+                CardList = listOfCards
+            };
+            return View(cardDetailsMultiple);
+
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditMultiple(CardDetailMultiple model)
+        {
+            if (!ModelState.IsValid) return View(model);
+
+/*            if (model.CardId != id)
+            {
+                ModelState.AddModelError("", "Id Mismatch");
+                return View(model);
+            }*/
+
+            var service = CreateCardService();
+
+            if (service.UpdateCards(model))
+            {
+                TempData["SaveResult"] = "Your card was updated.";
+                return RedirectToAction("Index");
+            }
+
+            ModelState.AddModelError("", "Your card could not be updated.");
+            return View(model);
+        }
+
         [ActionName("Delete")]
         public ActionResult Delete(int id)
         {
