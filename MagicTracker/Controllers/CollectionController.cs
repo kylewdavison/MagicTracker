@@ -49,7 +49,7 @@ namespace MagicTracker.Controllers
                 };
                 service.UpdateCard(model);
             }
-            return RedirectToAction("IndexEdit");
+            return RedirectToAction("Index");
         }
         //GET
         public ActionResult Create()

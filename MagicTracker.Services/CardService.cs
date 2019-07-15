@@ -84,7 +84,8 @@ namespace MagicTracker.Services
                                 MultiverseId = e.MultiverseId,
                                 CardCondition = (Models.Condition)(int)e.CardCondition,
                                 IsFoil = e.IsFoil,
-                                InUse = e.InUse
+                                InUse = e.InUse,
+                                ForTrade = e.ForTrade
                             }
                     );
                 return query.ToArray();
