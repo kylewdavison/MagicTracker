@@ -48,6 +48,27 @@ namespace MagicTracker.Services
             }
         }
 
+        public IEnumerable<CollectionItem> GetCollectionFullDetails()
+        {
+            using (var ctx = new ApplicationDbContext())
+            {
+                var query = ctx
+                    .Cards
+                    .Where(e => e.OwnerId == _userId)
+                    .Select(
+                        e =>
+                            new CollectionItem
+                            {
+                                CardId = e.CardId,
+                                CardName = e.Name,
+                                Printing = e.Printing,
+
+                            }
+                    );
+                return query.ToList();
+            }
+        }
+
         public IEnumerable<CollectionItem> GetCollection()
         {
             using (var ctx = new ApplicationDbContext())

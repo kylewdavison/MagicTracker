@@ -20,6 +20,11 @@ namespace MagicTracker.Controllers
             var model = service.GetCollection();
             return View(model);
         }
+/*
+        public ActionResult IndexEdit()
+        {
+
+        }*/
 
         //GET
         public ActionResult Create()
@@ -83,7 +88,7 @@ namespace MagicTracker.Controllers
             {
                 CardList = listOfCards
             };
-            return View(cardDetailsMultiple);
+            return View(listOfCards);
 
         }
 

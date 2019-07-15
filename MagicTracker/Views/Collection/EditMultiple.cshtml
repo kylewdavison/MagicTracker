@@ -1,4 +1,4 @@
-﻿@model MagicTracker.Models.CardDetailMultiple
+﻿@model List<MagicTracker.Models.CardEdit>
 
 @{
     ViewBag.Title = "EditMultiple";
@@ -38,6 +38,7 @@
             </td>
             <td>
                 @Html.EditorFor(modelItem => item.Printing, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(modelItem => item.Printing, "", new { @class = "text-danger" })
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CardCondition)
