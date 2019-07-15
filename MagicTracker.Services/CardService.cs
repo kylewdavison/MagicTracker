@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Card = MagicTracker.Data.Card;
+using MagicTracker.Models.Deck;
 
 namespace MagicTracker.Services
 {
@@ -35,6 +36,39 @@ namespace MagicTracker.Services
             }
         }
 
+        public bool CreateDeck(DeckCreate model)
+        {
+
+            string[] cardNames = model.CardListString.Split(',');
+            List<Card> newCards = new List<Card>();
+
+            var entity = new Deck()
+            {
+                OwnerId = _userId,
+                CardListString = model.CardListString
+            };
+
+            using (var ctx = new ApplicationDbContext())
+            {
+                foreach (var card in cardNames)
+                {
+                    var cardObject = new Card()
+                    {
+                        OwnerId = _userId,
+                        Name = card
+                    };
+                    ctx.Cards.Add(cardObject);
+                    newCards.Add(cardObject);
+                    
+                }
+                entity.ListOfCards = newCards;
+                ctx.Decks.Add(entity);
+                int test = ctx.SaveChanges();
+                return ctx.SaveChanges() == 1;
+
+            }
+        }
+
         public void FindCardWithApi(Card card)
         {
             List<mtgCard.Card> listOfResults = new List<mtgCard.Card>();
@@ -47,25 +81,6 @@ namespace MagicTracker.Services
                 var sets = searchResults.Value[0].Printings;
             }
         }
-
-/*        public IEnumerable<CollectionItem> GetCollectionFullDetails()
-        {
-            using (var ctx = new ApplicationDbContext())
-            {
-                var query = ctx
-                    .Cards
-                    .Where(e => e.OwnerId == _userId)
-                    .Select(
-                        e =>
-                            new CollectionItem
-                            {
-                                CardId = e.CardId,
-                                CardName = e.Name
-                            }
-                    );
-                return query.ToList();
-            }
-        }*/
 
         public IEnumerable<CollectionItem> GetCollection()
         {
@@ -113,6 +128,27 @@ namespace MagicTracker.Services
                         ForTrade = entity.ForTrade,
                         Holder = entity.Holder,
                         MultiverseId = entity.MultiverseId
+                    };
+            }
+        }
+
+        public DeckDetail GetDeckById(int id)
+        {
+            using (var ctx = new ApplicationDbContext())
+            {
+
+                var entity =
+                    ctx
+                        .Decks
+                        .Single(e => e.DeckId == id && e.OwnerId == _userId);
+                return
+                    new DeckDetail
+                    {
+                        DeckId = entity.DeckId,
+                        Name = entity.Name,
+                        OwnerId = entity.OwnerId,
+                        CardListString = entity.CardListString,
+                        ListOfCards = entity.ListOfCards,
                     };
             }
         }

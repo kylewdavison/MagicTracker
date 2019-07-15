@@ -1,4 +1,5 @@
 ﻿using MagicTracker.Models;
+using MagicTracker.Models.Deck;
 using MagicTracker.Services;
 using Microsoft.AspNet.Identity;
 using System;
@@ -75,6 +76,41 @@ namespace MagicTracker.Controllers
             };
 
             ModelState.AddModelError("", "Card could not be found.");
+            return View(model);
+        }
+
+        public ActionResult DeckCreate()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeckCreate(DeckCreate model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var service = CreateCardService();
+
+            if (service.CreateDeck(model))
+            {
+                TempData["SaveResult"] = "Your Deck was created.";
+                return RedirectToAction("Index");
+            };
+
+            ModelState.AddModelError("", "Card could not be found.");
+
+            return View(model);
+        }
+
+        public ActionResult DeckDetails(int id)
+        {
+            var svc = CreateCardService();
+            var model = svc.GetDeckById(id);
+
             return View(model);
         }
 

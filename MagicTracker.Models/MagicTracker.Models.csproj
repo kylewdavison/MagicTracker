@@ -59,11 +59,19 @@
     <Compile Include="CardEdit.cs" />
     <Compile Include="CardDetailMultiple.cs" />
     <Compile Include="CollectionItem.cs" />
+    <Compile Include="Deck\DeckCreate.cs" />
+    <Compile Include="Deck\DeckDetail.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MagicTracker.Data\MagicTracker.Data.csproj">
+      <Project>{E90CEA0C-2DFE-410A-AFE1-BA4C458C9B0E}</Project>
+      <Name>MagicTracker.Data</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

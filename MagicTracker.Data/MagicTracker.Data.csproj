@@ -55,12 +55,44 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Card.cs" />
+    <Compile Include="Deck.cs" />
     <Compile Include="IdentityModels.cs" />
+    <Compile Include="Migrations\201907092022009_InitialCreate.cs" />
+    <Compile Include="Migrations\201907092022009_InitialCreate.Designer.cs">
+      <DependentUpon>201907092022009_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201907151929410_Test.cs" />
+    <Compile Include="Migrations\201907151929410_Test.Designer.cs">
+      <DependentUpon>201907151929410_Test.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201907152049452_2ndMigration.cs" />
+    <Compile Include="Migrations\201907152049452_2ndMigration.Designer.cs">
+      <DependentUpon>201907152049452_2ndMigration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201907152054054_3rdMigration.cs" />
+    <Compile Include="Migrations\201907152054054_3rdMigration.Designer.cs">
+      <DependentUpon>201907152054054_3rdMigration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201907092022009_InitialCreate.resx">
+      <DependentUpon>201907092022009_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201907151929410_Test.resx">
+      <DependentUpon>201907151929410_Test.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201907152049452_2ndMigration.resx">
+      <DependentUpon>201907152049452_2ndMigration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201907152054054_3rdMigration.resx">
+      <DependentUpon>201907152054054_3rdMigration.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
