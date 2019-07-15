@@ -20,12 +20,37 @@ namespace MagicTracker.Controllers
             var model = service.GetCollection();
             return View(model);
         }
-/*
+
         public ActionResult IndexEdit()
         {
+            var userId = Guid.Parse(User.Identity.GetUserId());
+            var service = new CardService(userId);
+            var model = service.GetCollection();
+            return View(model);
+        }
 
-        }*/
-
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult IndexEdit(CollectionItem[] collectionItems)
+        {
+            var userId = Guid.Parse(User.Identity.GetUserId());
+            var service = new CardService(userId);
+            foreach(CollectionItem collectionItem in collectionItems)
+            {
+                var model = new CardEdit
+                {
+                    CardId = collectionItem.CardId,
+                    Name = collectionItem.Name,
+                    Printing = collectionItem.Printing,
+                    CardCondition = (Models.Condition)(int)collectionItem.CardCondition,
+                    IsFoil = collectionItem.IsFoil,
+                    InUse = collectionItem.InUse,
+                    ForTrade = collectionItem.ForTrade
+                };
+                service.UpdateCard(model);
+            }
+            return RedirectToAction("IndexEdit");
+        }
         //GET
         public ActionResult Create()
         {

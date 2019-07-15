@@ -48,7 +48,7 @@ namespace MagicTracker.Services
             }
         }
 
-        public IEnumerable<CollectionItem> GetCollectionFullDetails()
+/*        public IEnumerable<CollectionItem> GetCollectionFullDetails()
         {
             using (var ctx = new ApplicationDbContext())
             {
@@ -60,14 +60,12 @@ namespace MagicTracker.Services
                             new CollectionItem
                             {
                                 CardId = e.CardId,
-                                CardName = e.Name,
-                                Printing = e.Printing,
-
+                                CardName = e.Name
                             }
                     );
                 return query.ToList();
             }
-        }
+        }*/
 
         public IEnumerable<CollectionItem> GetCollection()
         {
@@ -81,7 +79,12 @@ namespace MagicTracker.Services
                             new CollectionItem
                             {
                                 CardId = e.CardId,
-                                CardName = e.Name
+                                Name = e.Name,
+                                Printing = e.Printing,
+                                MultiverseId = e.MultiverseId,
+                                CardCondition = (Models.Condition)(int)e.CardCondition,
+                                IsFoil = e.IsFoil,
+                                InUse = e.InUse
                             }
                     );
                 return query.ToArray();
