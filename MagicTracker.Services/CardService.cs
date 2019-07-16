@@ -38,10 +38,13 @@ namespace MagicTracker.Services
 
         public bool CreateDeck(DeckCreate model)
         {
-
+            if (model.CardListString == null) { return false; }
             string[] cardNames = model.CardListString.Split(',');
-            List<Card> newCards = new List<Card>();
+            cardNames = (from c in cardNames
+                         select c.Trim()).ToArray();
 
+            List<Card> newCards = new List<Card>();
+            int addedCount = 1;
             var entity = new Deck()
             {
                 OwnerId = _userId,
@@ -52,19 +55,23 @@ namespace MagicTracker.Services
             {
                 foreach (var card in cardNames)
                 {
-                    var cardObject = new Card()
+                    if (card != "")
                     {
-                        OwnerId = _userId,
-                        Name = card
-                    };
-                    ctx.Cards.Add(cardObject);
-                    newCards.Add(cardObject);
-                    
+                        var cardObject = new Card()
+                        {
+                            OwnerId = _userId,
+                            Name = card
+                        };
+                        ctx.Cards.Add(cardObject);
+                        newCards.Add(cardObject);
+                        addedCount += 2;
+                    }
                 }
                 entity.ListOfCards = newCards;
                 ctx.Decks.Add(entity);
-                int test = ctx.SaveChanges();
-                return ctx.SaveChanges() == 1;
+                //int test = ctx.SaveChanges();
+                return addedCount == ctx.SaveChanges();
+                //return ctx.SaveChanges() == 1;
 
             }
         }
@@ -111,7 +118,7 @@ namespace MagicTracker.Services
         {
             using (var ctx = new ApplicationDbContext())
             {
-                
+
                 var entity =
                     ctx
                         .Cards
@@ -196,10 +203,10 @@ namespace MagicTracker.Services
                         entity.Holder = card.Holder;
                     };
                 }
-                
+
                 return ctx.SaveChanges() == 1;
             }
-                
+
         }
 
         public bool DeleteCard(int cardId)
