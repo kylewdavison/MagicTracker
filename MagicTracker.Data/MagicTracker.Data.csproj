@@ -73,6 +73,18 @@
     <Compile Include="Migrations\201907152054054_3rdMigration.Designer.cs">
       <DependentUpon>201907152054054_3rdMigration.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201907161716099_deckId.cs" />
+    <Compile Include="Migrations\201907161716099_deckId.Designer.cs">
+      <DependentUpon>201907161716099_deckId.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201907161736104_deckId1.cs" />
+    <Compile Include="Migrations\201907161736104_deckId1.Designer.cs">
+      <DependentUpon>201907161736104_deckId1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201907161745161_deckid3.cs" />
+    <Compile Include="Migrations\201907161745161_deckid3.Designer.cs">
+      <DependentUpon>201907161745161_deckid3.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -92,6 +104,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201907152054054_3rdMigration.resx">
       <DependentUpon>201907152054054_3rdMigration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201907161716099_deckId.resx">
+      <DependentUpon>201907161716099_deckId.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201907161736104_deckId1.resx">
+      <DependentUpon>201907161736104_deckId1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201907161745161_deckid3.resx">
+      <DependentUpon>201907161745161_deckid3.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

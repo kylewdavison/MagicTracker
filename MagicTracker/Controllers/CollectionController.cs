@@ -46,7 +46,8 @@ namespace MagicTracker.Controllers
                     CardCondition = (Models.Condition)(int)collectionItem.CardCondition,
                     IsFoil = collectionItem.IsFoil,
                     InUse = collectionItem.InUse,
-                    ForTrade = collectionItem.ForTrade
+                    ForTrade = collectionItem.ForTrade,
+                    DeckId = collectionItem.DeckId
                 };
                 service.UpdateCard(model);
             }
@@ -141,6 +142,7 @@ namespace MagicTracker.Controllers
                     ForTrade = card.ForTrade,
                     MultiverseId = card.MultiverseId,
                     Holder = card.Holder,
+                    DeckId = card.DeckId,
                 };
 
                 listOfCards.Add(cardEdit);
@@ -165,7 +167,8 @@ namespace MagicTracker.Controllers
                 CardCondition = (Models.Condition)(int)detail.CardCondition,
                 IsFoil = detail.IsFoil,
                 InUse = detail.InUse,
-                ForTrade = detail.ForTrade
+                ForTrade = detail.ForTrade,
+                DeckId = detail.DeckId
             };
             return View(model);
         }
@@ -212,6 +215,7 @@ namespace MagicTracker.Controllers
                     ForTrade = card.ForTrade,
                     MultiverseId = card.MultiverseId,
                     Holder = card.Holder,
+                    DeckId = card.DeckId
                 };
 
                 listOfCards.Add(cardEdit);

@@ -32,5 +32,6 @@ namespace MagicTracker.Models
         public bool ForTrade { get; set; }
         [Display(Name = "Current Holder")]
         public int Holder { get; set; }
+        public int? DeckId { get; set; }
     }
 }

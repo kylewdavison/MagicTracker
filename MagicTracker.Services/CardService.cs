@@ -28,7 +28,7 @@ namespace MagicTracker.Services
                 OwnerId = _userId,
                 Name = model.CardName
             };
-
+            
             using (var ctx = new ApplicationDbContext())
             {
                 ctx.Cards.Add(entity);
@@ -43,7 +43,8 @@ namespace MagicTracker.Services
             cardNames = (from c in cardNames
                          select c.Trim()).ToArray();
 
-            List<Card> newCards = new List<Card>();
+            //List<Card> newCards = new List<Card>();
+            List<int> newCards = new List<int>();
             int addedCount = 1;
             var entity = new Deck()
             {
@@ -60,19 +61,17 @@ namespace MagicTracker.Services
                         var cardObject = new Card()
                         {
                             OwnerId = _userId,
-                            Name = card
+                            Name = card,
+                            DeckId = entity.DeckId
                         };
                         ctx.Cards.Add(cardObject);
-                        newCards.Add(cardObject);
-                        addedCount += 2;
+                        newCards.Add(cardObject.CardId);
+                        addedCount += 1;
                     }
                 }
                 entity.ListOfCards = newCards;
                 ctx.Decks.Add(entity);
-                //int test = ctx.SaveChanges();
                 return addedCount == ctx.SaveChanges();
-                //return ctx.SaveChanges() == 1;
-
             }
         }
 
@@ -107,12 +106,38 @@ namespace MagicTracker.Services
                                 CardCondition = (Models.Condition)(int)e.CardCondition,
                                 IsFoil = e.IsFoil,
                                 InUse = e.InUse,
-                                ForTrade = e.ForTrade
+                                ForTrade = e.ForTrade,
+                                DeckId = e.DeckId
                             }
                     );
                 return query.ToArray();
             }
         }
+
+/*        public IEnumerable<CollectionItem> GetDeck()
+        {
+            using (var ctx = new ApplicationDbContext())
+            {
+                var query = ctx
+                    .Cards
+                    .Where(e => e.OwnerId == _userId && e.Deck)
+                    .Select(
+                        e =>
+                            new CollectionItem
+                            {
+                                CardId = e.CardId,
+                                Name = e.Name,
+                                Printing = e.Printing,
+                                MultiverseId = e.MultiverseId,
+                                CardCondition = (Models.Condition)(int)e.CardCondition,
+                                IsFoil = e.IsFoil,
+                                InUse = e.InUse,
+                                ForTrade = e.ForTrade
+                            }
+                    );
+                return query.ToArray();
+            }
+        }*/
 
         public CardDetail GetCardById(int id)
         {
@@ -134,7 +159,8 @@ namespace MagicTracker.Services
                         InUse = entity.InUse,
                         ForTrade = entity.ForTrade,
                         Holder = entity.Holder,
-                        MultiverseId = entity.MultiverseId
+                        MultiverseId = entity.MultiverseId,
+                        DeckId = entity.DeckId
                     };
             }
         }
@@ -176,6 +202,7 @@ namespace MagicTracker.Services
                 entity.ForTrade = model.ForTrade;
                 entity.MultiverseId = model.MultiverseId;
                 entity.Holder = model.Holder;
+                entity.DeckId = model.DeckId;
 
                 return ctx.SaveChanges() == 1;
             }
@@ -201,6 +228,7 @@ namespace MagicTracker.Services
                         entity.ForTrade = card.ForTrade;
                         entity.MultiverseId = card.MultiverseId;
                         entity.Holder = card.Holder;
+                        entity.DeckId = card.DeckId;
                     };
                 }
 

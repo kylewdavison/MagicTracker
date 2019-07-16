@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,5 +32,8 @@ namespace MagicTracker.Data
         public bool InUse { get; set; }
         public bool ForTrade { get; set; }
         public int Holder { get; set; }
+        [ForeignKey(nameof(Deck))]
+        public int? DeckId { get; set; }
+        public virtual Deck Deck { get; set; }
     }
 }

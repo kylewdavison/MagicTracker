@@ -17,5 +17,6 @@ namespace MagicTracker.Models
         public bool ForTrade { get; set; }
         public int MultiverseId { get; set; }
         public int Holder { get; set; }
+        public int? DeckId { get; set; }
     }
 }
