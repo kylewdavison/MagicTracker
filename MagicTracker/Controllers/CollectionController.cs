@@ -30,6 +30,14 @@ namespace MagicTracker.Controllers
             return View(model);
         }
 
+        public ActionResult DeckIndex()
+        {
+            var userId = Guid.Parse(User.Identity.GetUserId());
+            var service = new CardService(userId);
+            var model = service.GetAllDecks();
+            return View(model);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult IndexEdit(CollectionItem[] collectionItems)
@@ -109,11 +117,44 @@ namespace MagicTracker.Controllers
 
         public ActionResult DeckDetails(int id)
         {
-            var svc = CreateCardService();
-            var model = svc.GetDeckById(id);
-
+            var userId = Guid.Parse(User.Identity.GetUserId());
+            var service = new CardService(userId);
+            var model = service.GetDeck(id);
             return View(model);
         }
+
+        public ActionResult DeckEdit(int id)
+        {
+            var userId = Guid.Parse(User.Identity.GetUserId());
+            var service = new CardService(userId);
+            var model = service.GetDeck(id);
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeckEdit(CollectionItem[] collectionItems)
+        {
+            var userId = Guid.Parse(User.Identity.GetUserId());
+            var service = new CardService(userId);
+            foreach (CollectionItem collectionItem in collectionItems)
+            {
+                var model = new CardEdit
+                {
+                    CardId = collectionItem.CardId,
+                    Name = collectionItem.Name,
+                    Printing = collectionItem.Printing,
+                    CardCondition = (Models.Condition)(int)collectionItem.CardCondition,
+                    IsFoil = collectionItem.IsFoil,
+                    InUse = collectionItem.InUse,
+                    ForTrade = collectionItem.ForTrade,
+                    DeckId = collectionItem.DeckId
+                };
+                service.UpdateCard(model);
+            }
+            return RedirectToAction("Index");
+        }
+
 
         public ActionResult Details(int id)
         {
@@ -271,6 +312,52 @@ namespace MagicTracker.Controllers
             service.DeleteCard(id);
 
             TempData["SaveResult"] = "Your card was deleted";
+
+            return RedirectToAction("Index");
+        }
+
+        [ActionName("DeckDelete")]
+        public ActionResult DeckDelete(int id)
+        {
+            var svc = CreateCardService();
+            var model = svc.GetDeckItem(id);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ActionName("DeckDelete")]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeckDeletePost(int id)
+        {
+            var service = CreateCardService();
+
+            service.DeleteDeck(id);
+
+            TempData["SaveResult"] = "Your deck was deleted";
+
+            return RedirectToAction("Index");
+        }
+
+        [ActionName("DeckDeleteComplete")]
+        public ActionResult DeckDeleteComplete(int id)
+        {
+            var svc = CreateCardService();
+            var model = svc.GetDeckItem(id);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ActionName("DeckDeleteComplete")]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeckDeleteCompletePost(int id)
+        {
+            var service = CreateCardService();
+
+            service.DeleteDeckComplete(id);
+
+            TempData["SaveResult"] = "Your deck was deleted";
 
             return RedirectToAction("Index");
         }

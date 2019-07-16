@@ -61,6 +61,7 @@
     <Compile Include="CollectionItem.cs" />
     <Compile Include="Deck\DeckCreate.cs" />
     <Compile Include="Deck\DeckDetail.cs" />
+    <Compile Include="Deck\DeckItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

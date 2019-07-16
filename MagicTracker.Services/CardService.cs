@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Card = MagicTracker.Data.Card;
 using MagicTracker.Models.Deck;
+using System.Text.RegularExpressions;
 
 namespace MagicTracker.Services
 {
@@ -42,8 +43,11 @@ namespace MagicTracker.Services
             string[] cardNames = model.CardListString.Split(',');
             cardNames = (from c in cardNames
                          select c.Trim()).ToArray();
+            var tempString = String.Join(",", cardNames.ToArray());
+            var reducedString = Regex.Replace(tempString, ",+", ",");
+            var finalString = reducedString.Trim(',');
+            model.CardListString = finalString;
 
-            //List<Card> newCards = new List<Card>();
             List<int> newCards = new List<int>();
             int addedCount = 1;
             var entity = new Deck()
@@ -114,13 +118,13 @@ namespace MagicTracker.Services
             }
         }
 
-/*        public IEnumerable<CollectionItem> GetDeck()
+        public IEnumerable<CollectionItem> GetDeck(int id)
         {
             using (var ctx = new ApplicationDbContext())
             {
                 var query = ctx
                     .Cards
-                    .Where(e => e.OwnerId == _userId && e.Deck)
+                    .Where(e => e.OwnerId == _userId && e.DeckId == id)
                     .Select(
                         e =>
                             new CollectionItem
@@ -137,7 +141,46 @@ namespace MagicTracker.Services
                     );
                 return query.ToArray();
             }
-        }*/
+        }
+        public DeckItem GetDeckItem (int id)
+        {
+            using (var ctx = new ApplicationDbContext())
+            {
+                var entity = ctx
+                    .Decks
+                    .Single(e => e.OwnerId == _userId && e.DeckId == id);
+                return
+                    new DeckItem
+                    {
+                        DeckId = entity.DeckId,
+                        Name = entity.Name,
+                        OwnerId = entity.OwnerId,
+                        CardListString = entity.CardListString
+                    };
+            }
+
+        }
+
+        public IEnumerable<DeckItem> GetAllDecks()
+        {
+            using (var ctx = new ApplicationDbContext())
+            {
+                var query = ctx
+                    .Decks
+                    .Where(e => e.OwnerId == _userId)
+                    .Select(
+                        e =>
+                            new DeckItem
+                            {
+                                DeckId = e.DeckId,
+                                Name = e.Name,
+                                OwnerId = e.OwnerId,
+                                CardListString = e.CardListString,
+                            }
+                    );
+                return query.ToArray();
+            }
+        }
 
         public CardDetail GetCardById(int id)
         {
@@ -161,27 +204,6 @@ namespace MagicTracker.Services
                         Holder = entity.Holder,
                         MultiverseId = entity.MultiverseId,
                         DeckId = entity.DeckId
-                    };
-            }
-        }
-
-        public DeckDetail GetDeckById(int id)
-        {
-            using (var ctx = new ApplicationDbContext())
-            {
-
-                var entity =
-                    ctx
-                        .Decks
-                        .Single(e => e.DeckId == id && e.OwnerId == _userId);
-                return
-                    new DeckDetail
-                    {
-                        DeckId = entity.DeckId,
-                        Name = entity.Name,
-                        OwnerId = entity.OwnerId,
-                        CardListString = entity.CardListString,
-                        ListOfCards = entity.ListOfCards,
                     };
             }
         }
@@ -252,5 +274,60 @@ namespace MagicTracker.Services
             }
         }
 
+        public bool DeleteDeck(int deckId)
+        {
+            using (var ctx = new ApplicationDbContext())
+            {
+                //remove assinged deck from Cards
+                int changeCount = 1;
+                var entity =
+                    ctx
+                        .Cards
+                        .Where(e => e.OwnerId == _userId && e.DeckId == deckId);
+
+                foreach (var card in entity)
+                {
+                    card.DeckId = null;
+                    changeCount += 1;
+                }
+
+                //delete deck
+                var deckEntity = ctx
+                    .Decks
+                    .Single(e => e.DeckId == deckId && e.OwnerId == _userId);
+
+                ctx.Decks.Remove(deckEntity);
+
+                return ctx.SaveChanges() == changeCount;
+            }
+        }
+
+        public bool DeleteDeckComplete(int deckId)
+        {
+            using (var ctx = new ApplicationDbContext())
+            {
+                //Delete cards in the deck
+                int changeCount = 1;
+                var entity =
+                    ctx
+                        .Cards
+                        .Where(e => e.OwnerId == _userId && e.DeckId == deckId);
+
+                foreach (var card in entity)
+                {
+                    ctx.Cards.Remove(card);
+                    changeCount += 1;
+                }
+
+                //delete deck
+                var deckEntity = ctx
+                    .Decks
+                    .Single(e => e.DeckId == deckId && e.OwnerId == _userId);
+
+                ctx.Decks.Remove(deckEntity);
+
+                return ctx.SaveChanges() == changeCount;
+            }
+        }
     }
 }

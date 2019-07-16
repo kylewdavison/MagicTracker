@@ -245,6 +245,10 @@
     <Content Include="Views\Collection\IndexEdit.cshtml" />
     <Content Include="Views\Collection\DeckCreate.cshtml" />
     <Content Include="Views\Collection\DeckDetails.cshtml" />
+    <Content Include="Views\Collection\DeckEdit.cshtml" />
+    <Content Include="Views\Collection\DeckIndex.cshtml" />
+    <Content Include="Views\Collection\DeckDelete.cshtml" />
+    <Content Include="Views\Collection\DeckDeleteComplete.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
