@@ -20,7 +20,7 @@ namespace MagicTracker.Tests
         {
             List<mtgCard.Card> listOfResults = new List<mtgCard.Card>();
             mtgService.CardService apiService = new mtgService.CardService();
-            var result = apiService.Where(x => x.Name, "Lightning Bolt")
+            var result = apiService.Where(x => x.Name, "Huntmaster of the Fells|Reliquary Tower|Snapcaster Mage")
                 //.Where(x => x.Set, "c17")
                 .All();
             /*            foreach (var card in result.Value)
@@ -35,8 +35,8 @@ namespace MagicTracker.Tests
 
             if (result.Value.Count != 0)
             {
-                foreach (var printing in result.Value[0].Printings)
-                Console.WriteLine(printing);
+                foreach (var card in result.Value)
+                Console.WriteLine(card.Name);
             }
             //Console.ReadLine();
 

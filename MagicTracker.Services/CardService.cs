@@ -70,14 +70,26 @@ namespace MagicTracker.Services
         public bool CreateDeck(DeckCreate model)
         {
             if (model.CardListString == null) { return false; }
-            string[] cardNames = model.CardListString.Split(',');
-            cardNames = (from c in cardNames
-                         select c.Trim()).ToArray();
-            var tempString = String.Join(",", cardNames.ToArray());
-            var reducedString = Regex.Replace(tempString, ",+", ",");
-            var finalString = reducedString.Trim(',');
-            model.CardListString = finalString;
+            string[] tempCardNames = model.CardListString.Split('\n');
+            tempCardNames = (from c in tempCardNames
+                             select c.Trim()).ToArray();
+            List<string> tempCardList = new List<string>();
+            foreach (var card in tempCardNames)
+            {
+                if (Char.IsDigit(card[0]))
+                {
+                    int count = int.Parse(Char.ToString(card[0]));
+                    var reducedCard = card.Remove(0, 1);
+                    var finalCard = reducedCard.Trim();
+                    for (int i = 0; i<count; i++)
+                    {
+                        tempCardList.Add(finalCard);
+                    }
+                }
+                else { tempCardList.Add(card); }
+            }
 
+            string[] cardNames = tempCardList.ToArray();
             List<int> newCards = new List<int>();
             int addedCount = 1;
             var entity = new Deck()
@@ -92,11 +104,26 @@ namespace MagicTracker.Services
                 {
                     if (card != "")
                     {
+                        var apiId = CheckIfCardApiExists(card);
+                        int tempApiId = -1;
+                        if (apiId == 0)
+                        {
+                            if (FindCardWithApi(card))
+                            {
+                                tempApiId = CheckIfCardApiExists(card);
+                            }
+                            else continue;
+                        }
+                        if (tempApiId != -1)
+                        {
+                            apiId = tempApiId;
+                        }
                         var cardObject = new Card()
                         {
                             OwnerId = _userId,
                             Name = card,
-                            DeckId = entity.DeckId
+                            DeckId = entity.DeckId,
+                            CardApiId = apiId
                         };
                         ctx.Cards.Add(cardObject);
                         newCards.Add(cardObject.CardId);
@@ -236,6 +263,8 @@ namespace MagicTracker.Services
 
             CardApi newCard = new CardApi();
 
+            //var search = apiService.Where
+
             var searchResults = apiService.Where(x => x.Name, card)
                 .All();
             if (searchResults.Value.Count != 0)
@@ -254,7 +283,7 @@ namespace MagicTracker.Services
                 Dictionary<string, string> tempSetNameDict = new Dictionary<string, string>();
                 foreach (var result in searchResults.Value)
                 {
-                    if(result.Name.ToLower() == card.ToLower())
+                    if (result.Name.ToLower() == card.ToLower())
                     {
                         if (result.MultiverseId != null)
                         {
@@ -285,10 +314,12 @@ namespace MagicTracker.Services
                     .CardApis
                     .Single(e => e.Name.ToLower() == name.ToLower());
                     return entity.CardApiId;
-                } catch (InvalidOperationException)
+                }
+                catch (InvalidOperationException)
                 {
                     return 0;
-                } catch (ArgumentNullException)
+                }
+                catch (ArgumentNullException)
                 {
                     return 0;
                 }
