@@ -67,7 +67,7 @@ namespace MagicTracker.Services
             }
         }
 
-        public bool CreateDeck(DeckCreate model)
+        public bool CreateDeckOld(DeckCreate model)
         {
             if (model.CardListString == null) { return false; }
             string[] tempCardNames = model.CardListString.Split('\n');
@@ -81,7 +81,7 @@ namespace MagicTracker.Services
                     int count = int.Parse(Char.ToString(card[0]));
                     var reducedCard = card.Remove(0, 1);
                     var finalCard = reducedCard.Trim();
-                    for (int i = 0; i<count; i++)
+                    for (int i = 0; i < count; i++)
                     {
                         tempCardList.Add(finalCard);
                     }
@@ -131,6 +131,108 @@ namespace MagicTracker.Services
                     }
                 }
                 entity.ListOfCards = newCards;
+                ctx.Decks.Add(entity);
+                return addedCount == ctx.SaveChanges();
+            }
+        }
+
+        public bool CreateDeck(DeckCreate model)
+        {
+            if (model.CardListString == null) { return false; }
+            List<string> tempCardList = new List<string>();
+            List<string> newCardsForApi = new List<string>();
+            Dictionary<string, int> tempCardDict = new Dictionary<string, int>();
+            List<int> deckList = new List<int>();
+
+            string[] tempCardNames = model.CardListString.Split('\n');
+            tempCardNames = (from c in tempCardNames
+                             select c.Trim()).ToArray();
+
+            foreach (var card in tempCardNames)
+            {
+                if(card == "") { continue; }
+                if (Char.IsDigit(card[0]))
+                {
+                    int count = int.Parse(Char.ToString(card[0]));
+                    var reducedCard = card.Remove(0, 1);
+                    var finalCard = reducedCard.Trim();
+                    tempCardList.Add(finalCard);
+                    tempCardDict.Add(finalCard, count);
+                }
+                else
+                {
+                    tempCardList.Add(card);
+                    tempCardDict.Add(card, 1);
+                }
+            }
+
+            var tempStringListNames = String.Join("|", tempCardList.ToArray());
+
+            string[] cardNames = tempCardList.ToArray();
+
+            int addedCount = 1;
+            var entity = new Deck()
+            {
+                OwnerId = _userId,
+                CardListString = tempStringListNames
+            };
+
+            using (var ctx = new ApplicationDbContext())
+            {
+                foreach (var card in cardNames)
+                {
+                    if (card != "")
+                    {
+                        var apiId = CheckIfCardApiExists(card);
+                        if (apiId == 0)
+                        {
+                            newCardsForApi.Add(card);
+                            continue;
+                        }
+                        for (int i = 0; i < tempCardDict[card]; i++)
+                        {
+                            var cardObject = new Card()
+                            {
+                                OwnerId = _userId,
+                                Name = card,
+                                DeckId = entity.DeckId,
+                                CardApiId = apiId
+                            };
+                            ctx.Cards.Add(cardObject);
+                            deckList.Add(cardObject.CardId);
+                            addedCount += 1;
+                        }
+                    }
+                }
+
+                var newCardsForApiString = String.Join("|", newCardsForApi.ToArray());
+                FindCardListWithApi(newCardsForApiString);
+
+                if (newCardsForApi.Count > 0)
+                {
+                    foreach (var card in newCardsForApi)
+                    {
+                        var apiId = CheckIfCardApiExists(card);
+                        if (apiId == 0)
+                        {
+                            continue;
+                        }
+                        for (int i = 0; i < tempCardDict[card]; i++)
+                        {
+                            var cardObject = new Card()
+                            {
+                                OwnerId = _userId,
+                                Name = card,
+                                DeckId = entity.DeckId,
+                                CardApiId = apiId
+                            };
+                            ctx.Cards.Add(cardObject);
+                            deckList.Add(cardObject.CardId);
+                            addedCount += 1;
+                        }
+                    }
+                }
+                entity.ListOfCards = deckList;
                 ctx.Decks.Add(entity);
                 return addedCount == ctx.SaveChanges();
             }
@@ -263,8 +365,6 @@ namespace MagicTracker.Services
 
             CardApi newCard = new CardApi();
 
-            //var search = apiService.Where
-
             var searchResults = apiService.Where(x => x.Name, card)
                 .All();
             if (searchResults.Value.Count != 0)
@@ -285,7 +385,7 @@ namespace MagicTracker.Services
                 {
                     if (result.Name.ToLower() == card.ToLower())
                     {
-                        if (result.MultiverseId != null)
+                        if (result.MultiverseId != null && tempSetNameDict.ContainsKey(result.Set) == false)
                         {
                             tempSetNameDict.Add(result.Set, result.SetName);
                             tempMultiSetDict.Add(result.MultiverseId.Value, result.Set);
@@ -297,6 +397,70 @@ namespace MagicTracker.Services
                 using (var ctx = new ApplicationDbContext())
                 {
                     ctx.CardApis.Add(newCard);
+                    ctx.SaveChanges();
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public bool FindCardListWithApi(string cardListString)
+        {
+            List<mtgCard.Card> listOfResults = new List<mtgCard.Card>();
+            mtgService.CardService apiService = new mtgService.CardService();
+            string[] cardNamesArray = cardListString.Split('|');
+            List<CardApi> listOfCarApi = new List<CardApi>();
+
+            var searchResults = apiService.Where(x => x.Name, cardListString)
+                .All();
+            if (searchResults.Value.Count != 0)
+            {
+                foreach (var card in cardNamesArray)
+                {
+                    for (int i = 0; i < searchResults.Value.Count; i++)
+                    {
+                        if (searchResults.Value[i].Name.ToLower() != card.ToLower())
+                        {
+                            continue;
+                        }
+
+                        CardApi newCard = new CardApi();
+                        newCard.Name = searchResults.Value[i].Name;
+                        if (searchResults.Value[i].ManaCost == null) { newCard.ManaCost = "{0}"; }
+                        else { newCard.ManaCost = searchResults.Value[i].ManaCost; }
+                        newCard.Colors = searchResults.Value[i].Colors;
+                        newCard.Type = searchResults.Value[i].Type;
+                        newCard.Subtypes = searchResults.Value[i].SubTypes;
+                        newCard.Text = searchResults.Value[i].Text;
+                        newCard.Printings = searchResults.Value[i].Printings;
+
+                        Dictionary<int, string> tempMultiSetDict = new Dictionary<int, string>();
+                        Dictionary<string, string> tempSetNameDict = new Dictionary<string, string>();
+                        foreach (var result in searchResults.Value)
+                        {
+                            if (result.Name.ToLower() == card.ToLower())
+                            {
+                                if (result.MultiverseId != null && tempSetNameDict.ContainsKey(result.Set) == false)
+                                {
+                                    tempSetNameDict.Add(result.Set, result.SetName);
+                                    tempMultiSetDict.Add(result.MultiverseId.Value, result.Set);
+                                }
+                            }
+                        }
+                        newCard.SetNameDict = tempSetNameDict;
+                        newCard.MultiSetDict = tempMultiSetDict;
+
+                        listOfCarApi.Add(newCard);
+                        break;
+                    }
+
+                }
+                using (var ctx = new ApplicationDbContext())
+                {
+                    foreach (var cardApi in listOfCarApi)
+                    {
+                        ctx.CardApis.Add(cardApi);
+                    }
                     ctx.SaveChanges();
                     return true;
                 }

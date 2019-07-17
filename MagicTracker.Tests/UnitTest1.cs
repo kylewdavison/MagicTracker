@@ -20,7 +20,9 @@ namespace MagicTracker.Tests
         {
             List<mtgCard.Card> listOfResults = new List<mtgCard.Card>();
             mtgService.CardService apiService = new mtgService.CardService();
-            var result = apiService.Where(x => x.Name, "Huntmaster of the Fells|Reliquary Tower|Snapcaster Mage")
+            var result = apiService
+                .Where(x => x.Name, "Huntmaster of the Fells|Reliquary Tower|Snapcaster Mage")
+                .Where(x => x.OrderBy, "name")
                 //.Where(x => x.Set, "c17")
                 .All();
             /*            foreach (var card in result.Value)
