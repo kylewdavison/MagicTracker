@@ -23,7 +23,6 @@ namespace MagicTracker.Data
         public int CardId { get; set; }
         [Required]
         public Guid OwnerId { get; set; }
-        //[ForeignKey("MultiverseId")]
         public int MultiverseId { get; set; }
         public string Name { get; set; }
         public string Printing { get; set; }
@@ -35,5 +34,8 @@ namespace MagicTracker.Data
         [ForeignKey(nameof(Deck))]
         public int? DeckId { get; set; }
         public virtual Deck Deck { get; set; }
+        [ForeignKey(nameof(CardApi))]
+        public int? CardApiId { get; set; }
+        public virtual CardApi CardApi { get; set; }
     }
 }

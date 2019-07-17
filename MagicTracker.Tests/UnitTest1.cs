@@ -41,7 +41,7 @@ namespace MagicTracker.Tests
             //Console.ReadLine();
 
         }
-
+/*
         [TestMethod]
         public void GetCollection()
         {
@@ -60,6 +60,6 @@ namespace MagicTracker.Tests
                     );
                 var results = query.ToArray();
             }
-        }
+        }*/
     }
 }

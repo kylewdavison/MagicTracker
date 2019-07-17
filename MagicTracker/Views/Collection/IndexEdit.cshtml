@@ -27,6 +27,7 @@
         {
             @Html.HiddenFor(model => model[i].MultiverseId)
             @Html.HiddenFor(model => model[i].DeckId)
+            @Html.HiddenFor(model => model[i].CardApiId)
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
             <tr>
                 <td>

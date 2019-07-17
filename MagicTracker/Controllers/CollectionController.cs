@@ -55,7 +55,9 @@ namespace MagicTracker.Controllers
                     IsFoil = collectionItem.IsFoil,
                     InUse = collectionItem.InUse,
                     ForTrade = collectionItem.ForTrade,
-                    DeckId = collectionItem.DeckId
+                    DeckId = collectionItem.DeckId,
+                    MultiverseId = collectionItem.MultiverseId,
+                    CardApiId = collectionItem.CardApiId
                 };
                 service.UpdateCard(model);
             }
@@ -148,7 +150,9 @@ namespace MagicTracker.Controllers
                     IsFoil = collectionItem.IsFoil,
                     InUse = collectionItem.InUse,
                     ForTrade = collectionItem.ForTrade,
-                    DeckId = collectionItem.DeckId
+                    DeckId = collectionItem.DeckId,
+                    MultiverseId = collectionItem.MultiverseId,
+                    CardApiId = collectionItem.CardApiId
                 };
                 service.UpdateCard(model);
             }
@@ -184,6 +188,7 @@ namespace MagicTracker.Controllers
                     MultiverseId = card.MultiverseId,
                     Holder = card.Holder,
                     DeckId = card.DeckId,
+                    CardApiId = card.CardApiId
                 };
 
                 listOfCards.Add(cardEdit);
@@ -209,7 +214,9 @@ namespace MagicTracker.Controllers
                 IsFoil = detail.IsFoil,
                 InUse = detail.InUse,
                 ForTrade = detail.ForTrade,
-                DeckId = detail.DeckId
+                DeckId = detail.DeckId,
+                MultiverseId = detail.MultiverseId,
+                CardApiId = detail.CardApiId
             };
             return View(model);
         }
@@ -256,7 +263,8 @@ namespace MagicTracker.Controllers
                     ForTrade = card.ForTrade,
                     MultiverseId = card.MultiverseId,
                     Holder = card.Holder,
-                    DeckId = card.DeckId
+                    DeckId = card.DeckId,
+                    CardApiId = card.CardApiId
                 };
 
                 listOfCards.Add(cardEdit);

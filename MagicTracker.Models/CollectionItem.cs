@@ -24,5 +24,6 @@ namespace MagicTracker.Models
         [Display(Name = "Current Holder")]
         public int Holder { get; set; }
         public int? DeckId { get; set; }
+        public int? CardApiId { get; set; }
     }
 }

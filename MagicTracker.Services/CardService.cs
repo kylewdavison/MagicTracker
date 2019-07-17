@@ -1,7 +1,5 @@
 ﻿using MagicTracker.Data;
 using MagicTracker.Models;
-using mtgCard = MtgApiManager.Lib.Model;
-using mtgService = MtgApiManager.Lib.Service;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +8,8 @@ using System.Threading.Tasks;
 using Card = MagicTracker.Data.Card;
 using MagicTracker.Models.Deck;
 using System.Text.RegularExpressions;
+using mtgCard = MtgApiManager.Lib.Model;
+using mtgService = MtgApiManager.Lib.Service;
 
 namespace MagicTracker.Services
 {
@@ -22,14 +22,44 @@ namespace MagicTracker.Services
             _userId = userId;
         }
 
-        public bool CreateCard(CardCreate model)
+        public bool CreateCardOld(CardCreate model)
         {
             var entity = new Card()
             {
                 OwnerId = _userId,
                 Name = model.CardName
             };
-            
+
+            using (var ctx = new ApplicationDbContext())
+            {
+                ctx.Cards.Add(entity);
+                return ctx.SaveChanges() == 1;
+            }
+        }
+
+        public bool CreateCard(CardCreate model)
+        {
+            var apiId = CheckIfCardApiExists(model.CardName);
+            int tempApiId = -1;
+            if (apiId == 0)
+            {
+                if (FindCardWithApi(model.CardName))
+                {
+                    tempApiId = CheckIfCardApiExists(model.CardName);
+                }
+                else return false;
+            }
+            if (tempApiId != -1)
+            {
+                apiId = tempApiId;
+            }
+            var entity = new Card()
+            {
+                OwnerId = _userId,
+                Name = model.CardName,
+                CardApiId = apiId
+            };
+
             using (var ctx = new ApplicationDbContext())
             {
                 ctx.Cards.Add(entity);
@@ -79,19 +109,6 @@ namespace MagicTracker.Services
             }
         }
 
-        public void FindCardWithApi(Card card)
-        {
-            List<mtgCard.Card> listOfResults = new List<mtgCard.Card>();
-            mtgService.CardService apiService = new mtgService.CardService();
-
-            var searchResults = apiService.Where(x => x.Name, card.Name)
-                .All();
-            if (searchResults.Value.Count != 0)
-            {
-                var sets = searchResults.Value[0].Printings;
-            }
-        }
-
         public IEnumerable<CollectionItem> GetCollection()
         {
             using (var ctx = new ApplicationDbContext())
@@ -111,7 +128,8 @@ namespace MagicTracker.Services
                                 IsFoil = e.IsFoil,
                                 InUse = e.InUse,
                                 ForTrade = e.ForTrade,
-                                DeckId = e.DeckId
+                                DeckId = e.DeckId,
+                                CardApiId = e.CardApiId
                             }
                     );
                 return query.ToArray();
@@ -136,13 +154,15 @@ namespace MagicTracker.Services
                                 CardCondition = (Models.Condition)(int)e.CardCondition,
                                 IsFoil = e.IsFoil,
                                 InUse = e.InUse,
-                                ForTrade = e.ForTrade
+                                ForTrade = e.ForTrade,
+                                CardApiId = e.CardApiId,
+                                DeckId = e.DeckId
                             }
                     );
                 return query.ToArray();
             }
         }
-        public DeckItem GetDeckItem (int id)
+        public DeckItem GetDeckItem(int id)
         {
             using (var ctx = new ApplicationDbContext())
             {
@@ -203,8 +223,75 @@ namespace MagicTracker.Services
                         ForTrade = entity.ForTrade,
                         Holder = entity.Holder,
                         MultiverseId = entity.MultiverseId,
-                        DeckId = entity.DeckId
+                        DeckId = entity.DeckId,
+                        CardApiId = entity.CardApiId
                     };
+            }
+        }
+
+        public bool FindCardWithApi(string card)
+        {
+            List<mtgCard.Card> listOfResults = new List<mtgCard.Card>();
+            mtgService.CardService apiService = new mtgService.CardService();
+
+            CardApi newCard = new CardApi();
+
+            var searchResults = apiService.Where(x => x.Name, card)
+                .All();
+            if (searchResults.Value.Count != 0)
+            {
+                if (searchResults.Value[0].Name.ToLower() != card.ToLower()) { return false; }
+                newCard.Name = searchResults.Value[0].Name;
+                if (searchResults.Value[0].ManaCost == null) { newCard.ManaCost = "{0}"; }
+                else { newCard.ManaCost = searchResults.Value[0].ManaCost; }
+                newCard.Colors = searchResults.Value[0].Colors;
+                newCard.Type = searchResults.Value[0].Type;
+                newCard.Subtypes = searchResults.Value[0].SubTypes;
+                newCard.Text = searchResults.Value[0].Text;
+                newCard.Printings = searchResults.Value[0].Printings;
+
+                Dictionary<int, string> tempMultiSetDict = new Dictionary<int, string>();
+                Dictionary<string, string> tempSetNameDict = new Dictionary<string, string>();
+                foreach (var result in searchResults.Value)
+                {
+                    if(result.Name.ToLower() == card.ToLower())
+                    {
+                        if (result.MultiverseId != null)
+                        {
+                            tempSetNameDict.Add(result.Set, result.SetName);
+                            tempMultiSetDict.Add(result.MultiverseId.Value, result.Set);
+                        }
+                    }
+                }
+                newCard.SetNameDict = tempSetNameDict;
+                newCard.MultiSetDict = tempMultiSetDict;
+                using (var ctx = new ApplicationDbContext())
+                {
+                    ctx.CardApis.Add(newCard);
+                    ctx.SaveChanges();
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public int CheckIfCardApiExists(string name)
+        {
+            using (var ctx = new ApplicationDbContext())
+            {
+                try
+                {
+                    var entity = ctx
+                    .CardApis
+                    .Single(e => e.Name.ToLower() == name.ToLower());
+                    return entity.CardApiId;
+                } catch (InvalidOperationException)
+                {
+                    return 0;
+                } catch (ArgumentNullException)
+                {
+                    return 0;
+                }
             }
         }
 
@@ -225,6 +312,7 @@ namespace MagicTracker.Services
                 entity.MultiverseId = model.MultiverseId;
                 entity.Holder = model.Holder;
                 entity.DeckId = model.DeckId;
+                entity.CardApiId = model.CardApiId;
 
                 return ctx.SaveChanges() == 1;
             }
@@ -251,6 +339,7 @@ namespace MagicTracker.Services
                         entity.MultiverseId = card.MultiverseId;
                         entity.Holder = card.Holder;
                         entity.DeckId = card.DeckId;
+                        entity.CardApiId = card.CardApiId;
                     };
                 }
 

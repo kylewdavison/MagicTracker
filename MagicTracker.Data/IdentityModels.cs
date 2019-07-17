@@ -34,6 +34,7 @@ namespace MagicTracker.Data
 
         public DbSet<Card> Cards { get; set; }
         public DbSet<Deck> Decks { get; set; }
+        public DbSet<CardApi> CardApis { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

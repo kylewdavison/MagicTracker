@@ -43,6 +43,9 @@
     <Reference Include="Microsoft.AspNet.Identity.EntityFramework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Identity.EntityFramework.2.2.2\lib\net45\Microsoft.AspNet.Identity.EntityFramework.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -55,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Card.cs" />
+    <Compile Include="CardApi.cs" />
     <Compile Include="Deck.cs" />
     <Compile Include="IdentityModels.cs" />
     <Compile Include="Migrations\201907092022009_InitialCreate.cs" />
@@ -85,6 +89,14 @@
     <Compile Include="Migrations\201907161745161_deckid3.Designer.cs">
       <DependentUpon>201907161745161_deckid3.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201907171527048_ApiAdded.cs" />
+    <Compile Include="Migrations\201907171527048_ApiAdded.Designer.cs">
+      <DependentUpon>201907171527048_ApiAdded.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201907171725407_ApiTableCreated.cs" />
+    <Compile Include="Migrations\201907171725407_ApiTableCreated.Designer.cs">
+      <DependentUpon>201907171725407_ApiTableCreated.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -113,6 +125,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201907161745161_deckid3.resx">
       <DependentUpon>201907161745161_deckid3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201907171527048_ApiAdded.resx">
+      <DependentUpon>201907171527048_ApiAdded.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201907171725407_ApiTableCreated.resx">
+      <DependentUpon>201907171725407_ApiTableCreated.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -18,5 +18,6 @@ namespace MagicTracker.Models
         public int MultiverseId { get; set; }
         public int Holder { get; set; }
         public int? DeckId { get; set; }
+        public int? CardApiId { get; set; }
     }
 }
