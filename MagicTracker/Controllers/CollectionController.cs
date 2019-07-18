@@ -4,6 +4,7 @@ using MagicTracker.Services;
 using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -30,21 +31,13 @@ namespace MagicTracker.Controllers
             return View(model);
         }
 
-        public ActionResult DeckIndex()
-        {
-            var userId = Guid.Parse(User.Identity.GetUserId());
-            var service = new CardService(userId);
-            var model = service.GetAllDecks();
-            return View(model);
-        }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult IndexEdit(CollectionItem[] collectionItems)
         {
             var userId = Guid.Parse(User.Identity.GetUserId());
             var service = new CardService(userId);
-            foreach(CollectionItem collectionItem in collectionItems)
+            foreach (CollectionItem collectionItem in collectionItems)
             {
                 var model = new CardEdit
                 {
@@ -63,6 +56,15 @@ namespace MagicTracker.Controllers
             }
             return RedirectToAction("Index");
         }
+
+        public ActionResult DeckIndex()
+        {
+            var userId = Guid.Parse(User.Identity.GetUserId());
+            var service = new CardService(userId);
+            var model = service.GetAllDecks();
+            return View(model);
+        }
+
         //GET
         public ActionResult Create()
         {
@@ -90,74 +92,7 @@ namespace MagicTracker.Controllers
             return View(model);
         }
 
-        public ActionResult DeckCreate()
-        {
-            return View();
-        }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeckCreate(DeckCreate model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-
-            var service = CreateCardService();
-
-            if (service.CreateDeck(model))
-            {
-                TempData["SaveResult"] = "Your Deck was created.";
-                return RedirectToAction("Index");
-            };
-
-            ModelState.AddModelError("", "Card could not be found.");
-
-            return View(model);
-        }
-
-        public ActionResult DeckDetails(int id)
-        {
-            var userId = Guid.Parse(User.Identity.GetUserId());
-            var service = new CardService(userId);
-            var model = service.GetDeck(id);
-            return View(model);
-        }
-
-        public ActionResult DeckEdit(int id)
-        {
-            var userId = Guid.Parse(User.Identity.GetUserId());
-            var service = new CardService(userId);
-            var model = service.GetDeck(id);
-            return View(model);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeckEdit(CollectionItem[] collectionItems)
-        {
-            var userId = Guid.Parse(User.Identity.GetUserId());
-            var service = new CardService(userId);
-            foreach (CollectionItem collectionItem in collectionItems)
-            {
-                var model = new CardEdit
-                {
-                    CardId = collectionItem.CardId,
-                    Name = collectionItem.Name,
-                    Printing = collectionItem.Printing,
-                    CardCondition = (Models.Condition)(int)collectionItem.CardCondition,
-                    IsFoil = collectionItem.IsFoil,
-                    InUse = collectionItem.InUse,
-                    ForTrade = collectionItem.ForTrade,
-                    DeckId = collectionItem.DeckId,
-                    MultiverseId = collectionItem.MultiverseId,
-                    CardApiId = collectionItem.CardApiId
-                };
-                service.UpdateCard(model);
-            }
-            return RedirectToAction("Index");
-        }
 
 
         public ActionResult Details(int id)
@@ -276,7 +211,6 @@ namespace MagicTracker.Controllers
             return View(cardDetailsMultiple);
 
         }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult EditMultiple(CardDetailMultiple model)
@@ -324,6 +258,98 @@ namespace MagicTracker.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        private CardService CreateCardService()
+        {
+            var userId = Guid.Parse(User.Identity.GetUserId());
+            var service = new CardService(userId);
+            return service;
+        }
+
+
+
+        public ActionResult DeckCreate()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeckCreate(DeckCreate model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var service = CreateCardService();
+
+            if (service.CreateDeck(model))
+            {
+                TempData["SaveResult"] = "Your Deck was created.";
+                return RedirectToAction("Index");
+            };
+
+            ModelState.AddModelError("", "Card could not be found.");
+
+            return View(model);
+        }
+
+        public ActionResult DeckDetails(int id)
+        {
+            var userId = Guid.Parse(User.Identity.GetUserId());
+            var service = new CardService(userId);
+            var model = service.GetDeck(id);
+            return View(model);
+        }
+
+        public ActionResult DeckEdit(int id)
+        {
+            var userId = Guid.Parse(User.Identity.GetUserId());
+            var service = new CardService(userId);
+            var model = service.GetDeck(id);
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeckEdit(CollectionItem[] collectionItems)
+        {
+            var userId = Guid.Parse(User.Identity.GetUserId());
+            var service = new CardService(userId);
+            foreach (CollectionItem collectionItem in collectionItems)
+            {
+                var model = new CardEdit
+                {
+                    CardId = collectionItem.CardId,
+                    Name = collectionItem.Name,
+                    Printing = collectionItem.Printing,
+                    CardCondition = (Models.Condition)(int)collectionItem.CardCondition,
+                    IsFoil = collectionItem.IsFoil,
+                    InUse = collectionItem.InUse,
+                    ForTrade = collectionItem.ForTrade,
+                    DeckId = collectionItem.DeckId,
+                    MultiverseId = collectionItem.MultiverseId,
+                    CardApiId = collectionItem.CardApiId
+                };
+                service.UpdateCard(model);
+            }
+            return RedirectToAction("DeckIndex");
+        }
+
+        public ActionResult DeckImportEdit(int id)
+        {
+            var userId = Guid.Parse(User.Identity.GetUserId());
+            var service = new CardService(userId);
+            var deck = service.GetDeck(id);
+            var apiDict = service.GetDeckApiDictionary(deck);
+            ApiDeckView model = new ApiDeckView();
+            model.Deck = deck.ToArray();
+            model.ApiDict = apiDict;
+            return View(model);
+        }
+
         [ActionName("DeckDelete")]
         public ActionResult DeckDelete(int id)
         {
@@ -368,15 +394,6 @@ namespace MagicTracker.Controllers
             TempData["SaveResult"] = "Your deck was deleted";
 
             return RedirectToAction("Index");
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        private CardService CreateCardService()
-        {
-            var userId = Guid.Parse(User.Identity.GetUserId());
-            var service = new CardService(userId);
-            return service;
         }
     }
 }

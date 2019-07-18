@@ -57,6 +57,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CardApi\ApiDeckView.cs" />
+    <Compile Include="CardApi\CardApiItem.cs" />
     <Compile Include="CardCreate.cs" />
     <Compile Include="CardDetail.cs" />
     <Compile Include="CardEdit.cs" />
@@ -77,8 +79,6 @@
       <Name>MagicTracker.Data</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="CardApi\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

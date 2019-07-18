@@ -250,6 +250,7 @@
     <Content Include="Views\Collection\DeckIndex.cshtml" />
     <Content Include="Views\Collection\DeckDelete.cshtml" />
     <Content Include="Views\Collection\DeckDeleteComplete.cshtml" />
+    <Content Include="Views\Collection\DeckImportEdit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
