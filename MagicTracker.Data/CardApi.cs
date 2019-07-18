@@ -13,12 +13,12 @@ namespace MagicTracker.Data
         public int CardApiId { get; set; }
         public string Name { get; set; }
         public string ManaCost { get; set; }
-        public string[] Colors { get; set; }
+        public string Colors { get; set; }
         public string Type { get; set; }
-        public string[] Subtypes { get; set; }
+        public string Subtypes { get; set; }
         public string Text { get; set; }
-        public string[] Printings { get; set; }
-        public Dictionary<int, string> MultiSetDict { get; set; }
-        public Dictionary<string, string> SetNameDict { get; set; }
+        public string Printings { get; set; }
+        public string MultiSetDict { get; set; }
+        public string SetNameDict { get; set; }
     }
 }

@@ -60,7 +60,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CardApiService.cs" />
     <Compile Include="CardService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -97,6 +97,10 @@
     <Compile Include="Migrations\201907171725407_ApiTableCreated.Designer.cs">
       <DependentUpon>201907171725407_ApiTableCreated.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201907181821553_FixingWithCereal.cs" />
+    <Compile Include="Migrations\201907181821553_FixingWithCereal.Designer.cs">
+      <DependentUpon>201907181821553_FixingWithCereal.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -131,6 +135,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201907171725407_ApiTableCreated.resx">
       <DependentUpon>201907171725407_ApiTableCreated.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201907181821553_FixingWithCereal.resx">
+      <DependentUpon>201907181821553_FixingWithCereal.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

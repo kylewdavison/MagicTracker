@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using mtgCard = MtgApiManager.Lib.Model;
 using mtgService = MtgApiManager.Lib.Service;
 using MagicTracker.Models.CardApi;
+using Newtonsoft.Json;
 
 namespace MagicTracker.Services
 {
@@ -149,7 +150,7 @@ namespace MagicTracker.Services
                         }
                     }
                 }
-                entity.ListOfCards = deckList;
+                entity.ListOfCards = JsonConvert.SerializeObject(deckList);
                 ctx.Decks.Add(entity);
                 return addedCount == ctx.SaveChanges();
             }
@@ -323,11 +324,11 @@ namespace MagicTracker.Services
                 newCard.Name = searchResults.Value[0].Name;
                 if (searchResults.Value[0].ManaCost == null) { newCard.ManaCost = "{0}"; }
                 else { newCard.ManaCost = searchResults.Value[0].ManaCost; }
-                newCard.Colors = searchResults.Value[0].Colors;
+                newCard.Colors = JsonConvert.SerializeObject(searchResults.Value[0].Colors);
                 newCard.Type = searchResults.Value[0].Type;
-                newCard.Subtypes = searchResults.Value[0].SubTypes;
+                newCard.Subtypes = JsonConvert.SerializeObject(searchResults.Value[0].SubTypes);
                 newCard.Text = searchResults.Value[0].Text;
-                newCard.Printings = searchResults.Value[0].Printings;
+                newCard.Printings = JsonConvert.SerializeObject(searchResults.Value[0].Printings);
 
                 Dictionary<int, string> tempMultiSetDict = new Dictionary<int, string>();
                 Dictionary<string, string> tempSetNameDict = new Dictionary<string, string>();
@@ -342,8 +343,8 @@ namespace MagicTracker.Services
                         }
                     }
                 }
-                newCard.SetNameDict = tempSetNameDict;
-                newCard.MultiSetDict = tempMultiSetDict;
+                newCard.SetNameDict = JsonConvert.SerializeObject(tempSetNameDict);
+                newCard.MultiSetDict = JsonConvert.SerializeObject(tempMultiSetDict);
                 using (var ctx = new ApplicationDbContext())
                 {
                     ctx.CardApis.Add(newCard);
@@ -378,11 +379,11 @@ namespace MagicTracker.Services
                         newCard.Name = searchResults.Value[i].Name;
                         if (searchResults.Value[i].ManaCost == null) { newCard.ManaCost = "{0}"; }
                         else { newCard.ManaCost = searchResults.Value[i].ManaCost; }
-                        newCard.Colors = searchResults.Value[i].Colors;
+                        newCard.Colors = JsonConvert.SerializeObject(searchResults.Value[i].Colors);
                         newCard.Type = searchResults.Value[i].Type;
-                        newCard.Subtypes = searchResults.Value[i].SubTypes;
+                        newCard.Subtypes = JsonConvert.SerializeObject(searchResults.Value[i].SubTypes);
                         newCard.Text = searchResults.Value[i].Text;
-                        newCard.Printings = searchResults.Value[i].Printings;
+                        newCard.Printings = JsonConvert.SerializeObject(searchResults.Value[i].Printings);
 
                         Dictionary<int, string> tempMultiSetDict = new Dictionary<int, string>();
                         Dictionary<string, string> tempSetNameDict = new Dictionary<string, string>();
@@ -397,8 +398,8 @@ namespace MagicTracker.Services
                                 }
                             }
                         }
-                        newCard.SetNameDict = tempSetNameDict;
-                        newCard.MultiSetDict = tempMultiSetDict;
+                        newCard.SetNameDict = JsonConvert.SerializeObject(tempSetNameDict);
+                        newCard.MultiSetDict = JsonConvert.SerializeObject(tempMultiSetDict);
 
                         listOfCarApi.Add(newCard);
                         break;

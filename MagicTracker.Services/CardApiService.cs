@@ -29,6 +29,7 @@ namespace MagicTracker.Services
                 newCard.Subtypes = searchResults.Value[1].SubTypes;
                 newCard.Name = searchResults.Value[1].Text;
                 newCard.Printings = searchResults.Value[1].Printings;
+                newCard.Text = searchResults.Value[1].Text;
 
                 foreach (var result in searchResults.Value)
                 {

@@ -12,6 +12,6 @@ namespace MagicTracker.Models.Deck
         public string Name { get; set; }
         public Guid OwnerId { get; set; }
         public string CardListString { get; set; }
-        public List<int> ListOfCards { get; set; }
+        public string ListOfCards { get; set; }
     }
 }
