@@ -92,9 +92,6 @@ namespace MagicTracker.Controllers
             return View(model);
         }
 
-
-
-
         public ActionResult Details(int id)
         {
             var svc = CreateCardService();
@@ -348,6 +345,33 @@ namespace MagicTracker.Controllers
             model.Deck = deck.ToArray();
             model.ApiDict = apiDict;
             return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeckImportEdit(ApiDeckView deckView)
+        {
+            var userId = Guid.Parse(User.Identity.GetUserId());
+            var service = new CardService(userId);
+            foreach (CollectionItem collectionItem in deckView.Deck)
+            {
+                var model = new CardEdit
+                {
+                    CardId = collectionItem.CardId,
+                    Name = collectionItem.Name,
+                    Printing = collectionItem.Printing,
+                    CardCondition = (Models.Condition)(int)collectionItem.CardCondition,
+                    IsFoil = collectionItem.IsFoil,
+                    InUse = collectionItem.InUse,
+                    ForTrade = collectionItem.ForTrade,
+                    DeckId = collectionItem.DeckId,
+                    MultiverseId = collectionItem.MultiverseId,
+                    //MultiverseId = JsonConvert.DeserializeObject < Dictionary<string, string> > deckView.ApiDict[collectionItem.CardApiId.GetValueOrDefault()].SetNameDict[collectionItem.Printing],
+                    CardApiId = collectionItem.CardApiId
+                };
+                service.UpdateCard(model);
+            }
+            return RedirectToAction("DeckIndex");
         }
 
         [ActionName("DeckDelete")]

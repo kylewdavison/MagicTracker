@@ -101,6 +101,10 @@
     <Compile Include="Migrations\201907181821553_FixingWithCereal.Designer.cs">
       <DependentUpon>201907181821553_FixingWithCereal.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201907181926474_ChangingCardDetail.cs" />
+    <Compile Include="Migrations\201907181926474_ChangingCardDetail.Designer.cs">
+      <DependentUpon>201907181926474_ChangingCardDetail.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -138,6 +142,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201907181821553_FixingWithCereal.resx">
       <DependentUpon>201907181821553_FixingWithCereal.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201907181926474_ChangingCardDetail.resx">
+      <DependentUpon>201907181926474_ChangingCardDetail.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

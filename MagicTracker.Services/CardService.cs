@@ -123,8 +123,31 @@ namespace MagicTracker.Services
                     }
                 }
 
-                var newCardsForApiString = String.Join("|", newCardsForApi.ToArray());
-                FindCardListWithApi(newCardsForApiString);
+
+                string newCardsForApiString;
+                if (newCardsForApi.Count < 10)
+                {
+                    newCardsForApiString = String.Join("|", newCardsForApi.ToArray());
+                    FindCardListWithApi(newCardsForApiString);
+                }
+                else
+                {
+                    var reducedCardList = new List<string>();
+                    foreach(var card in newCardsForApi)
+                    {
+                        reducedCardList.Add(card);
+                        if(reducedCardList.Count == 10)
+                        {
+                            newCardsForApiString = String.Join("|", reducedCardList.ToArray());
+                            FindCardListWithApi(newCardsForApiString);
+                            reducedCardList.Clear();
+                        }
+                    }
+                    newCardsForApiString = String.Join("|", reducedCardList.ToArray());
+                    FindCardListWithApi(newCardsForApiString);
+                }
+
+                
 
                 if (newCardsForApi.Count > 0)
                 {
@@ -150,6 +173,9 @@ namespace MagicTracker.Services
                         }
                     }
                 }
+
+
+
                 entity.ListOfCards = JsonConvert.SerializeObject(deckList);
                 ctx.Decks.Add(entity);
                 return addedCount == ctx.SaveChanges();
@@ -336,10 +362,13 @@ namespace MagicTracker.Services
                 {
                     if (result.Name.ToLower() == card.ToLower())
                     {
-                        if (result.MultiverseId != null && tempSetNameDict.ContainsKey(result.Set) == false)
+                        if (tempSetNameDict.ContainsKey(result.Set) == false)
                         {
                             tempSetNameDict.Add(result.Set, result.SetName);
-                            tempMultiSetDict.Add(result.MultiverseId.Value, result.Set);
+                            if(result.MultiverseId != null)
+                            {
+                                tempMultiSetDict.Add(result.MultiverseId.Value, result.Set);
+                            }
                         }
                     }
                 }
@@ -391,10 +420,13 @@ namespace MagicTracker.Services
                         {
                             if (result.Name.ToLower() == card.ToLower())
                             {
-                                if (result.MultiverseId != null && tempSetNameDict.ContainsKey(result.Set) == false)
+                                if (tempSetNameDict.ContainsKey(result.Set) == false)
                                 {
                                     tempSetNameDict.Add(result.Set, result.SetName);
-                                    tempMultiSetDict.Add(result.MultiverseId.Value, result.Set);
+                                    if(result.MultiverseId != null)
+                                    {
+                                        tempMultiSetDict.Add(result.MultiverseId.Value, result.Set);
+                                    }
                                 }
                             }
                         }

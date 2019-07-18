@@ -13,8 +13,7 @@ namespace MagicTracker.Models
         LightlyPlayed,
         ModeratelyPlayed,
         HeavilyPlayed,
-        Damaged,
-        Default
+        Damaged
     }
     public class CardDetail
     {
