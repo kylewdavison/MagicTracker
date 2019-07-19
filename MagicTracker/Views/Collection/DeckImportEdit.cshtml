@@ -59,7 +59,7 @@
                         <div class="form-group">
                             <div class="col-md-10">
                                 @Html.DropDownListFor(model => model.Deck[i].CardCondition,
-                                    new SelectList(Enum.GetValues(typeof(MagicTracker.Models.Condition))),
+                                    new SelectList(Enum.GetValues(typeof(MagicTracker.Data.Condition))),
                                     new { htmlAttributes = new { @class = "form-control" } }
                                     )
                                 @Html.ValidationMessageFor(model => model.Deck[i].CardCondition, "", new { @class = "text-danger" })

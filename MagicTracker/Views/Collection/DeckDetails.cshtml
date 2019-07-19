@@ -5,7 +5,6 @@
 }
 
 <h2>DeckDetails</h2>
-<img src="http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=337092&type=card">
 <p>
     @Html.ActionLink("Create New", "CreateDeck")
 </p>
@@ -43,7 +42,6 @@
                 @Html.DisplayFor(modelItem => item.CardId)
             </td>
             <td>
-                @Html.HiddenFor(modelItem => item.Name)
                 <a href="@imgLink" rel="popover" data-img="@imgLink">@Html.DisplayFor(modelItem => item.Name)</a>
             </td>
             <td>

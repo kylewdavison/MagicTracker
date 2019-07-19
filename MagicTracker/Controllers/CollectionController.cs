@@ -1,4 +1,5 @@
 ﻿using MagicTracker.Models;
+using MagicTracker.Models.CardApi;
 using MagicTracker.Models.Deck;
 using MagicTracker.Services;
 using Microsoft.AspNet.Identity;
@@ -45,7 +46,7 @@ namespace MagicTracker.Controllers
                     CardId = collectionItem.CardId,
                     Name = collectionItem.Name,
                     Printing = collectionItem.Printing,
-                    CardCondition = (Models.Condition)(int)collectionItem.CardCondition,
+                    CardCondition = collectionItem.CardCondition,
                     IsFoil = collectionItem.IsFoil,
                     InUse = collectionItem.InUse,
                     ForTrade = collectionItem.ForTrade,
@@ -82,8 +83,10 @@ namespace MagicTracker.Controllers
             }
 
             var service = CreateCardService();
-            
-            if (service.CreateCard(model))
+            var resultId = service.CreateCard(model);
+
+
+            if (resultId != -1)
             {
                 TempData["SaveResult"] = "Your card was created.";
                 return RedirectToAction("Index");
@@ -114,7 +117,7 @@ namespace MagicTracker.Controllers
                     CardId = card.CardId,
                     Name = card.Name,
                     Printing = card.Printing,
-                    CardCondition = (Models.Condition)(int)card.CardCondition,
+                    CardCondition = card.CardCondition,
                     IsFoil = card.IsFoil,
                     InUse = card.InUse,
                     ForTrade = card.ForTrade,
@@ -142,7 +145,7 @@ namespace MagicTracker.Controllers
                 CardId = detail.CardId,
                 Name = detail.Name,
                 Printing = detail.Printing,
-                CardCondition = (Models.Condition)(int)detail.CardCondition,
+                CardCondition = detail.CardCondition,
                 IsFoil = detail.IsFoil,
                 InUse = detail.InUse,
                 ForTrade = detail.ForTrade,
@@ -152,6 +155,7 @@ namespace MagicTracker.Controllers
             };
             return View(model);
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, CardEdit model)
@@ -176,60 +180,15 @@ namespace MagicTracker.Controllers
             return View(model);
         }
 
-        public ActionResult EditMultiple()
+/*        [ActionName("CardImportEdit")]
+        public ActionResult CardImportEdit(int id)
         {
             var service = CreateCardService();
-            List<CardEdit> listOfCards = new List<CardEdit>();
-            var collection = service.GetCollection();
-            foreach (var entry in collection)
-            {
-                var card = service.GetCardById(entry.CardId);
-                var cardEdit = new CardEdit()
-                {
-                    CardId = card.CardId,
-                    Name = card.Name,
-                    Printing = card.Printing,
-                    CardCondition = (Models.Condition)(int)card.CardCondition,
-                    IsFoil = card.IsFoil,
-                    InUse = card.InUse,
-                    ForTrade = card.ForTrade,
-                    MultiverseId = card.MultiverseId,
-                    DeckId = card.DeckId,
-                    CardApiId = card.CardApiId
-                };
-
-                listOfCards.Add(cardEdit);
-            }
-            var cardDetailsMultiple = new CardDetailMultiple()
-            {
-                CardList = listOfCards
-            };
-            return View(cardDetailsMultiple);
-
-        }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult EditMultiple(CardDetailMultiple model)
-        {
-            if (!ModelState.IsValid) return View(model);
-
-/*            if (model.CardId != id)
-            {
-                ModelState.AddModelError("", "Id Mismatch");
-                return View(model);
-            }*/
-
-            var service = CreateCardService();
-
-            if (service.UpdateCards(model))
-            {
-                TempData["SaveResult"] = "Your card was updated.";
-                return RedirectToAction("Index");
-            }
-
-            ModelState.AddModelError("", "Your card could not be updated.");
-            return View(model);
-        }
+            ApiCardView model = new ApiCardView();
+            model.Card = service.GetCardById(id);
+            model.Api = service.GetCardApiItem(model.Card.CardApiId);
+            return View();
+        }*/
 
         [ActionName("Delete")]
         public ActionResult Delete(int id)
@@ -318,7 +277,7 @@ namespace MagicTracker.Controllers
                     CardId = collectionItem.CardId,
                     Name = collectionItem.Name,
                     Printing = collectionItem.Printing,
-                    CardCondition = (Models.Condition)(int)collectionItem.CardCondition,
+                    CardCondition = collectionItem.CardCondition,
                     IsFoil = collectionItem.IsFoil,
                     InUse = collectionItem.InUse,
                     ForTrade = collectionItem.ForTrade,
@@ -359,7 +318,7 @@ namespace MagicTracker.Controllers
                     CardId = collectionItem.CardId,
                     Name = collectionItem.Name,
                     Printing = collectionItem.Printing,
-                    CardCondition = (Models.Condition)(int)collectionItem.CardCondition,
+                    CardCondition = collectionItem.CardCondition,
                     IsFoil = collectionItem.IsFoil,
                     InUse = collectionItem.InUse,
                     ForTrade = collectionItem.ForTrade,

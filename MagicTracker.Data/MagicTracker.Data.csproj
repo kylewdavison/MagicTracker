@@ -105,6 +105,10 @@
     <Compile Include="Migrations\201907181926474_ChangingCardDetail.Designer.cs">
       <DependentUpon>201907181926474_ChangingCardDetail.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201907191548282_removedHolder.cs" />
+    <Compile Include="Migrations\201907191548282_removedHolder.Designer.cs">
+      <DependentUpon>201907191548282_removedHolder.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -145,6 +149,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201907181926474_ChangingCardDetail.resx">
       <DependentUpon>201907181926474_ChangingCardDetail.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201907191548282_removedHolder.resx">
+      <DependentUpon>201907191548282_removedHolder.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -32,12 +32,13 @@
 
     @foreach (var item in Model)
     {
+        var imgLink = "http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=" + item.MultiverseId.ToString() + "&type=card";
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.CardId)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Name)
+                <a href="@Url.Action("Details", "Collection", new {id = item.CardId})" rel="popover" data-img="@imgLink">@Html.DisplayFor(modelItem => item.Name)</a>
             </td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new {id = item.CardId }) |

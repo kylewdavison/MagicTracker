@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MagicTracker.Data;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -21,7 +22,6 @@ namespace MagicTracker.Models
         public bool InUse { get; set; }
         [Display(Name = "For Trade")]
         public bool ForTrade { get; set; }
-        [Display(Name = "Current Holder")]
         public int? DeckId { get; set; }
         public int? CardApiId { get; set; }
     }

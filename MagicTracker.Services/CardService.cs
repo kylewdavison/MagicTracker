@@ -24,7 +24,7 @@ namespace MagicTracker.Services
             _userId = userId;
         }
 
-        public bool CreateCard(CardCreate model)
+        public int CreateCard(CardCreate model)
         {
             var apiId = CheckIfCardApiExists(model.CardName);
             int tempApiId = -1;
@@ -34,7 +34,7 @@ namespace MagicTracker.Services
                 {
                     tempApiId = CheckIfCardApiExists(model.CardName);
                 }
-                else return false;
+                else return -1;
             }
             if (tempApiId != -1)
             {
@@ -50,7 +50,11 @@ namespace MagicTracker.Services
             using (var ctx = new ApplicationDbContext())
             {
                 ctx.Cards.Add(entity);
-                return ctx.SaveChanges() == 1;
+                if (1 == ctx.SaveChanges())
+                {
+                    return entity.CardApiId.Value;
+                }
+                else { return -1; }
             }
         }
 
@@ -92,7 +96,8 @@ namespace MagicTracker.Services
             var entity = new Deck()
             {
                 OwnerId = _userId,
-                CardListString = tempStringListNames
+                CardListString = tempStringListNames,
+                Name = model.Name
             };
 
             using (var ctx = new ApplicationDbContext())
@@ -201,7 +206,7 @@ namespace MagicTracker.Services
                                 Name = e.Name,
                                 Printing = e.Printing,
                                 MultiverseId = e.MultiverseId,
-                                CardCondition = (Models.Condition)(int)e.CardCondition,
+                                CardCondition = e.CardCondition,
                                 IsFoil = e.IsFoil,
                                 InUse = e.InUse,
                                 ForTrade = e.ForTrade,
@@ -228,7 +233,7 @@ namespace MagicTracker.Services
                                 Name = e.Name,
                                 Printing = e.Printing,
                                 MultiverseId = e.MultiverseId,
-                                CardCondition = (Models.Condition)(int)e.CardCondition,
+                                CardCondition = e.CardCondition,
                                 IsFoil = e.IsFoil,
                                 InUse = e.InUse,
                                 ForTrade = e.ForTrade,
@@ -291,6 +296,31 @@ namespace MagicTracker.Services
                 return apiDict;
             }
         }
+
+        public CardApiItem GetCardApiItem(int id)
+        {
+            using (var ctx = new ApplicationDbContext())
+            {
+                var entity = ctx
+                              .CardApis
+                              .Single(e => e.CardApiId == id);
+                var carpApiTemp = new CardApiItem
+                {
+                    CardApiId = entity.CardApiId,
+                    Name = entity.Name,
+                    ManaCost = entity.ManaCost,
+                    Colors = entity.Colors,
+                    Type = entity.Type,
+                    Subtypes = entity.Subtypes,
+                    Text = entity.Text,
+                    Printings = entity.Printings,
+                    MultiSetDict = entity.MultiSetDict,
+                    SetNameDict = entity.SetNameDict
+                };
+                return carpApiTemp;
+            }
+        }
+
         public IEnumerable<DeckItem> GetAllDecks()
         {
             using (var ctx = new ApplicationDbContext())
@@ -312,7 +342,7 @@ namespace MagicTracker.Services
             }
         }
 
-        public CardDetail GetCardById(int id)
+        public CollectionItem GetCardById(int id)
         {
             using (var ctx = new ApplicationDbContext())
             {
@@ -322,12 +352,12 @@ namespace MagicTracker.Services
                         .Cards
                         .Single(e => e.CardId == id && e.OwnerId == _userId);
                 return
-                    new CardDetail
+                    new CollectionItem
                     {
                         CardId = entity.CardId,
                         Name = entity.Name,
                         Printing = entity.Printing,
-                        CardCondition = (Models.Condition)(int)entity.CardCondition,
+                        CardCondition = entity.CardCondition,
                         IsFoil = entity.IsFoil,
                         InUse = entity.InUse,
                         ForTrade = entity.ForTrade,
@@ -498,35 +528,6 @@ namespace MagicTracker.Services
 
                 return ctx.SaveChanges() == 1;
             }
-        }
-
-        public bool UpdateCards(CardDetailMultiple models)
-        {
-            using (var ctx = new ApplicationDbContext())
-            {
-                foreach (var entry in models.CardList)
-                {
-                    var card = GetCardById(entry.CardId);
-                    var entity = ctx
-                    .Cards
-                    .Single(e => e.CardId == entry.CardId && e.OwnerId == _userId);
-                    {
-                        entity.CardId = card.CardId;
-                        entity.Name = card.Name;
-                        entity.Printing = card.Printing;
-                        entity.CardCondition = (Data.Condition)(int)card.CardCondition;
-                        entity.IsFoil = card.IsFoil;
-                        entity.InUse = card.InUse;
-                        entity.ForTrade = card.ForTrade;
-                        entity.MultiverseId = card.MultiverseId;
-                        entity.DeckId = card.DeckId;
-                        entity.CardApiId = card.CardApiId;
-                    };
-                }
-
-                return ctx.SaveChanges() == 1;
-            }
-
         }
 
         public bool DeleteCard(int cardId)

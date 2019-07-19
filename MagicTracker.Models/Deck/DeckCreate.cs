@@ -9,5 +9,6 @@ namespace MagicTracker.Models.Deck
     public class DeckCreate
     {
         public string CardListString { get; set; }
+        public string Name { get; set; }
     }
 }

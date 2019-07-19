@@ -262,7 +262,6 @@
     <Content Include="Views\Collection\Edit.cshtml" />
     <Content Include="Views\Collection\Delete.cshtml" />
     <Content Include="Views\Collection\DetailsMultiple.cshtml" />
-    <Content Include="Views\Collection\EditMultiple.cshtml" />
     <Content Include="Views\Collection\IndexEdit.cshtml" />
     <Content Include="Views\Collection\DeckCreate.cshtml" />
     <Content Include="Views\Collection\DeckDetails.cshtml" />
