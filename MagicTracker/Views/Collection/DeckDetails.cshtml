@@ -5,7 +5,7 @@
 }
 
 <h2>DeckDetails</h2>
-
+<img src="http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=337092&type=card">
 <p>
     @Html.ActionLink("Create New", "CreateDeck")
 </p>
@@ -21,9 +21,6 @@
             @Html.DisplayNameFor(model => model.Printing)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.MultiverseId)
-        </th>
-        <th>
             @Html.DisplayNameFor(model => model.IsFoil)
         </th>
         <th>
@@ -33,49 +30,43 @@
             @Html.DisplayNameFor(model => model.ForTrade)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Holder)
-        </th>
-        <th>
             @Html.DisplayNameFor(model => model.DeckId)
         </th>
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.CardId)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Printing)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.MultiverseId)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.IsFoil)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.InUse)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ForTrade)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Holder)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DeckId)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id = item.CardId }) |
-            @Html.ActionLink("Details", "Details", new { id = item.CardId }) |
-            @Html.ActionLink("Delete", "Delete", new { id = item.CardId })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        var imgLink = "http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=" + item.MultiverseId.ToString() + "&type=card";
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.CardId)
+            </td>
+            <td>
+                @Html.HiddenFor(modelItem => item.Name)
+                <a href="@imgLink" rel="popover" data-img="@imgLink">@Html.DisplayFor(modelItem => item.Name)</a>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Printing)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsFoil)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.InUse)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ForTrade)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DeckId)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.CardId }) |
+                @Html.ActionLink("Details", "Details", new { id = item.CardId }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.CardId })
+            </td>
+        </tr>
+    }
 
 </table>

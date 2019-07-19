@@ -30,7 +30,6 @@ namespace MagicTracker.Data
         public bool IsFoil { get; set; }
         public bool InUse { get; set; }
         public bool ForTrade { get; set; }
-        public int Holder { get; set; }
         [ForeignKey(nameof(Deck))]
         public int? DeckId { get; set; }
         public virtual Deck Deck { get; set; }

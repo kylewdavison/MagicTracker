@@ -21,7 +21,6 @@
         <th>Foil</th>
         <th>In Use</th>
         <th>For Trade</th>
-        <th>Holder</th>
     </tr>
 
     @foreach (var item in Model.CardList)
@@ -44,9 +43,6 @@
     </td>
     <td>
         @Html.DisplayFor(modelItem => item.ForTrade)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.Holder)
     </td>
 </tr>
     }

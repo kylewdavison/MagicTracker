@@ -54,9 +54,9 @@ namespace MagicTracker.Services
             }
         }
 
-        public bool CreateDeck(DeckCreate model)
+        public int CreateDeck(DeckCreate model)
         {
-            if (model.CardListString == null) { return false; }
+            if (model.CardListString == null) { return -1; }
             List<string> tempCardList = new List<string>();
             List<string> newCardsForApi = new List<string>();
             Dictionary<string, int> tempCardDict = new Dictionary<string, int>();
@@ -125,7 +125,7 @@ namespace MagicTracker.Services
 
 
                 string newCardsForApiString;
-                if (newCardsForApi.Count < 10)
+                if (newCardsForApi.Count < 15)
                 {
                     newCardsForApiString = String.Join("|", newCardsForApi.ToArray());
                     FindCardListWithApi(newCardsForApiString);
@@ -136,7 +136,7 @@ namespace MagicTracker.Services
                     foreach(var card in newCardsForApi)
                     {
                         reducedCardList.Add(card);
-                        if(reducedCardList.Count == 10)
+                        if(reducedCardList.Count == 15)
                         {
                             newCardsForApiString = String.Join("|", reducedCardList.ToArray());
                             FindCardListWithApi(newCardsForApiString);
@@ -178,7 +178,11 @@ namespace MagicTracker.Services
 
                 entity.ListOfCards = JsonConvert.SerializeObject(deckList);
                 ctx.Decks.Add(entity);
-                return addedCount == ctx.SaveChanges();
+                if (addedCount == ctx.SaveChanges())
+                {
+                    return entity.DeckId;
+                }
+                return -1;
             }
         }
 
@@ -327,7 +331,6 @@ namespace MagicTracker.Services
                         IsFoil = entity.IsFoil,
                         InUse = entity.InUse,
                         ForTrade = entity.ForTrade,
-                        Holder = entity.Holder,
                         MultiverseId = entity.MultiverseId,
                         DeckId = entity.DeckId,
                         CardApiId = entity.CardApiId
@@ -356,7 +359,7 @@ namespace MagicTracker.Services
                 newCard.Text = searchResults.Value[0].Text;
                 newCard.Printings = JsonConvert.SerializeObject(searchResults.Value[0].Printings);
 
-                Dictionary<int, string> tempMultiSetDict = new Dictionary<int, string>();
+                Dictionary<string, int> tempMultiSetDict = new Dictionary<string, int>();
                 Dictionary<string, string> tempSetNameDict = new Dictionary<string, string>();
                 foreach (var result in searchResults.Value)
                 {
@@ -367,8 +370,9 @@ namespace MagicTracker.Services
                             tempSetNameDict.Add(result.Set, result.SetName);
                             if(result.MultiverseId != null)
                             {
-                                tempMultiSetDict.Add(result.MultiverseId.Value, result.Set);
+                                tempMultiSetDict.Add(result.Set, result.MultiverseId.Value);
                             }
+                            else { tempMultiSetDict.Add(result.Set, -1); }
                         }
                     }
                 }
@@ -414,7 +418,7 @@ namespace MagicTracker.Services
                         newCard.Text = searchResults.Value[i].Text;
                         newCard.Printings = JsonConvert.SerializeObject(searchResults.Value[i].Printings);
 
-                        Dictionary<int, string> tempMultiSetDict = new Dictionary<int, string>();
+                        Dictionary<string, int> tempMultiSetDict = new Dictionary<string, int>();
                         Dictionary<string, string> tempSetNameDict = new Dictionary<string, string>();
                         foreach (var result in searchResults.Value)
                         {
@@ -425,8 +429,9 @@ namespace MagicTracker.Services
                                     tempSetNameDict.Add(result.Set, result.SetName);
                                     if(result.MultiverseId != null)
                                     {
-                                        tempMultiSetDict.Add(result.MultiverseId.Value, result.Set);
+                                        tempMultiSetDict.Add(result.Set, result.MultiverseId.Value);
                                     }
+                                    else { tempMultiSetDict.Add(result.Set, -1); }
                                 }
                             }
                         }
@@ -488,7 +493,6 @@ namespace MagicTracker.Services
                 entity.InUse = model.InUse;
                 entity.ForTrade = model.ForTrade;
                 entity.MultiverseId = model.MultiverseId;
-                entity.Holder = model.Holder;
                 entity.DeckId = model.DeckId;
                 entity.CardApiId = model.CardApiId;
 
@@ -515,7 +519,6 @@ namespace MagicTracker.Services
                         entity.InUse = card.InUse;
                         entity.ForTrade = card.ForTrade;
                         entity.MultiverseId = card.MultiverseId;
-                        entity.Holder = card.Holder;
                         entity.DeckId = card.DeckId;
                         entity.CardApiId = card.CardApiId;
                     };

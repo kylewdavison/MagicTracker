@@ -21,7 +21,6 @@
             <th>Foil</th>
             <th>In Use</th>
             <th>For Trade</th>
-            <th>Holder</th>
         </tr>
         @for (int i = 0; i < Model.Length; i++)
         {
@@ -94,15 +93,6 @@
                                 @Html.EditorFor(model => model[i].ForTrade)
                                 @Html.ValidationMessageFor(model => model[i].ForTrade, "", new { @class = "text-danger" })
                             </div>
-                        </div>
-                    </div>
-                </td>
-
-                <td>
-                    <div class="form-group">
-                        <div class="col-md-10">
-                            @Html.EditorFor(model => model[i].Holder, new { htmlAttributes = new { @class = "form-control" } })
-                            @Html.ValidationMessageFor(model => model[i].Holder, "", new { @class = "text-danger" })
                         </div>
                     </div>
                 </td>

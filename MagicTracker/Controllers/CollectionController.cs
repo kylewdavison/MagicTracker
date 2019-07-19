@@ -2,6 +2,7 @@
 using MagicTracker.Models.Deck;
 using MagicTracker.Services;
 using Microsoft.AspNet.Identity;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -118,7 +119,6 @@ namespace MagicTracker.Controllers
                     InUse = card.InUse,
                     ForTrade = card.ForTrade,
                     MultiverseId = card.MultiverseId,
-                    Holder = card.Holder,
                     DeckId = card.DeckId,
                     CardApiId = card.CardApiId
                 };
@@ -194,7 +194,6 @@ namespace MagicTracker.Controllers
                     InUse = card.InUse,
                     ForTrade = card.ForTrade,
                     MultiverseId = card.MultiverseId,
-                    Holder = card.Holder,
                     DeckId = card.DeckId,
                     CardApiId = card.CardApiId
                 };
@@ -264,8 +263,6 @@ namespace MagicTracker.Controllers
             return service;
         }
 
-
-
         public ActionResult DeckCreate()
         {
             return View();
@@ -281,13 +278,12 @@ namespace MagicTracker.Controllers
             }
 
             var service = CreateCardService();
-
-            if (service.CreateDeck(model))
+            var resultId = service.CreateDeck(model);
+            if ( resultId != -1)
             {
                 TempData["SaveResult"] = "Your Deck was created.";
-                return RedirectToAction("Index");
+                return RedirectToAction("DeckImportEdit", new { id = resultId });
             };
-
             ModelState.AddModelError("", "Card could not be found.");
 
             return View(model);
@@ -348,13 +344,16 @@ namespace MagicTracker.Controllers
         }
 
         [HttpPost]
+        [ActionName("DeckImportEdit")]
         [ValidateAntiForgeryToken]
         public ActionResult DeckImportEdit(ApiDeckView deckView)
-        {
+        { 
             var userId = Guid.Parse(User.Identity.GetUserId());
             var service = new CardService(userId);
+            deckView.ApiDict = service.GetDeckApiDictionary(deckView.Deck);
             foreach (CollectionItem collectionItem in deckView.Deck)
             {
+                var setDict = JsonConvert.DeserializeObject<Dictionary<string, int>>(deckView.ApiDict[collectionItem.CardApiId.GetValueOrDefault()].MultiSetDict);
                 var model = new CardEdit
                 {
                     CardId = collectionItem.CardId,
@@ -365,8 +364,7 @@ namespace MagicTracker.Controllers
                     InUse = collectionItem.InUse,
                     ForTrade = collectionItem.ForTrade,
                     DeckId = collectionItem.DeckId,
-                    MultiverseId = collectionItem.MultiverseId,
-                    //MultiverseId = JsonConvert.DeserializeObject < Dictionary<string, string> > deckView.ApiDict[collectionItem.CardApiId.GetValueOrDefault()].SetNameDict[collectionItem.Printing],
+                    MultiverseId = setDict[collectionItem.Printing],
                     CardApiId = collectionItem.CardApiId
                 };
                 service.UpdateCard(model);
