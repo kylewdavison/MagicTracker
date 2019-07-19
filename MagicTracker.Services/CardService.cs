@@ -52,7 +52,7 @@ namespace MagicTracker.Services
                 ctx.Cards.Add(entity);
                 if (1 == ctx.SaveChanges())
                 {
-                    return entity.CardApiId.Value;
+                    return entity.CardId;
                 }
                 else { return -1; }
             }

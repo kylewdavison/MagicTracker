@@ -14,8 +14,7 @@ namespace MagicTracker.Data
         LightlyPlayed,
         ModeratelyPlayed,
         HeavilyPlayed,
-        Damaged,
-        Default
+        Damaged
     }
     public class Card
     {

@@ -62,7 +62,6 @@
     <Compile Include="CardApi\CardApiItem.cs" />
     <Compile Include="CardCreate.cs" />
     <Compile Include="CardEdit.cs" />
-    <Compile Include="CardDetailMultiple.cs" />
     <Compile Include="CollectionItem.cs" />
     <Compile Include="Deck\DeckCreate.cs" />
     <Compile Include="Deck\DeckDetail.cs" />

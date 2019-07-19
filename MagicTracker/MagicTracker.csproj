@@ -261,7 +261,6 @@
     <Content Include="Views\Collection\Details.cshtml" />
     <Content Include="Views\Collection\Edit.cshtml" />
     <Content Include="Views\Collection\Delete.cshtml" />
-    <Content Include="Views\Collection\DetailsMultiple.cshtml" />
     <Content Include="Views\Collection\IndexEdit.cshtml" />
     <Content Include="Views\Collection\DeckCreate.cshtml" />
     <Content Include="Views\Collection\DeckDetails.cshtml" />
@@ -279,6 +278,7 @@
     <Content Include="Scripts\popper.js.map" />
     <Content Include="Scripts\popper-utils.min.js.map" />
     <Content Include="Scripts\popper-utils.js.map" />
+    <Content Include="Views\Collection\CardEdit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -41,7 +41,7 @@
                 <a href="@Url.Action("Details", "Collection", new {id = item.CardId})" rel="popover" data-img="@imgLink">@Html.DisplayFor(modelItem => item.Name)</a>
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new {id = item.CardId }) |
+                @Html.ActionLink("Edit", "CardEdit", new {id = item.CardId }) |
                 @Html.ActionLink("Details", "Details", new {id = item.CardId}) |
                 @Html.ActionLink("Delete", "Delete", new {id = item.CardId})
             </td>
