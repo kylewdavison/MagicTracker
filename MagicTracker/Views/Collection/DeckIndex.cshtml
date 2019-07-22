@@ -18,9 +18,6 @@
             @Html.DisplayNameFor(model => model.Name)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.OwnerId)
-        </th>
-        <th>
             @Html.DisplayNameFor(model => model.CardListString)
         </th>
         <th></th>
@@ -35,16 +32,13 @@
             @Html.DisplayFor(modelItem => item.Name)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.OwnerId)
-        </td>
-        <td>
             @Html.DisplayFor(modelItem => item.CardListString)
         </td>
         <td>
-            @Html.ActionLink("Edit", "DeckEdit", new { id = item.DeckId }) |
+            @Html.ActionLink("Edit", "DeckImportEdit", new { id = item.DeckId }) |
             @Html.ActionLink("Details", "DeckDetails", new { id = item.DeckId }) |
-            @Html.ActionLink("Delete Decklist", "DeckDelete", new { id = item.DeckId }) |
-            @Html.ActionLink("Delete Deck and Cards", "DeckDeleteComplete", new { id = item.DeckId })
+            @Html.ActionLink("Delete Deck", "DeckDelete", new { id = item.DeckId }) |
+            @Html.ActionLink("Delete Cards", "DeckDeleteComplete", new { id = item.DeckId })
         </td>
     </tr>
 }

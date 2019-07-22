@@ -1,0 +1,122 @@
+﻿@model MagicTracker.Models.CardApi.ApiCardView
+
+@{
+    ViewBag.Title = "CardDetails";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Card</h4>
+    <hr />
+    <section>
+        <section style="width:50%; float: left">
+            <dl class="dl-horizontal">
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Card.Name)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Card.Name)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Card.Printing)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Card.Printing)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.DeckName)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.DeckName)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Card.CardCondition)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Card.CardCondition)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Card.IsFoil)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Card.IsFoil)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Card.InUse)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Card.InUse)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Card.ForTrade)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Card.ForTrade)
+                </dd>
+
+            </dl>
+        </section>
+        <section style="width:50%; float: right">
+            <dl class="dl-horizontal">
+                <dt>
+                    @Html.DisplayNameFor(model => model.Api.ManaCost)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Api.ManaCost)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Api.Colors)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Api.Colors)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Api.Type)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Api.Type)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Api.Subtypes)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Api.Subtypes)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Api.Text)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Api.Text)
+                </dd>
+            </dl>
+            <p>
+                @Html.ActionLink("Edit", "CardEdit", new { id = Model.Card.CardId }) |
+                @Html.ActionLink("Back to List", "Index")
+            </p>
+        </section>
+    </section>
+</div>
+

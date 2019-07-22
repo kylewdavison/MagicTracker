@@ -11,5 +11,6 @@ namespace MagicTracker.Models
     {
         public CollectionItem[] Deck { get; set; }
         public Dictionary<int, CardApiItem> ApiDict { get; set; }
+        public Dictionary<string, int> DeckDict { get; set; }
     }
 }

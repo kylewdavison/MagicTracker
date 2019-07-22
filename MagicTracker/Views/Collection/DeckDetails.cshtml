@@ -37,12 +37,14 @@
     @foreach (var item in Model)
     {
         var imgLink = "http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=" + item.MultiverseId.ToString() + "&type=card";
+        var gathererLink = "http://gatherer.wizards.com/pages/card/Details.aspx?multiverseid=" + item.MultiverseId.ToString() + "&type=card";
+        
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.CardId)
             </td>
             <td>
-                <a href="@imgLink" rel="popover" data-img="@imgLink">@Html.DisplayFor(modelItem => item.Name)</a>
+                <a href="@gathererLink" rel="popover" data-img="@imgLink">@Html.DisplayFor(modelItem => item.Name)</a>
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Printing)
@@ -61,7 +63,7 @@
             </td>
             <td>
                 @Html.ActionLink("Edit", "CardEdit", new { id = item.CardId }) |
-                @Html.ActionLink("Details", "Details", new { id = item.CardId }) |
+                @Html.ActionLink("Details", "CardDetails", new { id = item.CardId }) |
                 @Html.ActionLink("Delete", "Delete", new { id = item.CardId })
             </td>
         </tr>

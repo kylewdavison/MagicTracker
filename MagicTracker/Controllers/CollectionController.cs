@@ -22,6 +22,14 @@ namespace MagicTracker.Controllers
             var userId = Guid.Parse(User.Identity.GetUserId());
             var service = new CardService(userId);
             var model = service.GetCollection();
+            service.GetAllDecksDictionary();
+            return View(model);
+        }
+        public ActionResult Available()
+        {
+            var userId = Guid.Parse(User.Identity.GetUserId());
+            var service = new CardService(userId);
+            var model = service.GetAvailable();
             return View(model);
         }
 
@@ -104,47 +112,15 @@ namespace MagicTracker.Controllers
             return View(model);
         }
 
-        public ActionResult EditOld(int id)
+        public ActionResult CardDetails(int id)
         {
             var service = CreateCardService();
-            var detail = service.GetCardById(id);
-            var model = new CardEdit
-            {
-                CardId = detail.CardId,
-                Name = detail.Name,
-                Printing = detail.Printing,
-                CardCondition = detail.CardCondition,
-                IsFoil = detail.IsFoil,
-                InUse = detail.InUse,
-                ForTrade = detail.ForTrade,
-                DeckId = detail.DeckId,
-                MultiverseId = detail.MultiverseId,
-                CardApiId = detail.CardApiId
-            };
-            return View(model);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult EditOld(int id, CardEdit model)
-        {
-            if (!ModelState.IsValid) return View(model);
-
-            if (model.CardId != id)
-            {
-                ModelState.AddModelError("", "Id Mismatch");
-                return View(model);
-            }
-
-            var service = CreateCardService();
-
-            if (service.UpdateCard(model))
-            {
-                TempData["SaveResult"] = "Your card was updated.";
-                return RedirectToAction("Index");
-            }
-
-            ModelState.AddModelError("", "Your card could not be updated.");
+            ApiCardView model = new ApiCardView();
+            model.Card = service.GetCardById(id);
+            model.Api = service.GetCardApiItem(model.Card.CardApiId.Value);
+            if (model.Card.DeckId != null) { model.DeckName = service.GetDeckItem(model.Card.DeckId.Value).Name; }
+            else model.DeckName = "No Deck";
+            
             return View(model);
         }
 
@@ -155,6 +131,7 @@ namespace MagicTracker.Controllers
             ApiCardView model = new ApiCardView();
             model.Card = service.GetCardById(id);
             model.Api = service.GetCardApiItem(model.Card.CardApiId.Value);
+            model.DeckDict = service.GetAllDecksDictionary();
             return View(model);
         }
 
@@ -181,6 +158,7 @@ namespace MagicTracker.Controllers
                 MultiverseId = setDict[cardView.Card.Printing],
                 CardApiId = cardView.Card.CardApiId
             };
+            if(model.DeckId == -1) { model.DeckId = null; }
                 service.UpdateCard(model);
             
             return RedirectToAction("Index");
@@ -295,6 +273,7 @@ namespace MagicTracker.Controllers
             ApiDeckView model = new ApiDeckView();
             model.Deck = deck.ToArray();
             model.ApiDict = apiDict;
+            model.DeckDict = service.GetAllDecksDictionary();
             return View(model);
         }
 
@@ -322,6 +301,7 @@ namespace MagicTracker.Controllers
                     MultiverseId = setDict[collectionItem.Printing],
                     CardApiId = collectionItem.CardApiId
                 };
+                if (model.DeckId == -1) { model.DeckId = null; }
                 service.UpdateCard(model);
             }
             return RedirectToAction("DeckIndex");

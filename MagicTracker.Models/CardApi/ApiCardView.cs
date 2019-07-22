@@ -10,5 +10,7 @@ namespace MagicTracker.Models.CardApi
     {
         public CollectionItem Card { get; set; }
         public CardApiItem Api { get; set; }
+        public Dictionary<string, int> DeckDict { get; set; }
+        public string DeckName { get; set; }
     }
 }

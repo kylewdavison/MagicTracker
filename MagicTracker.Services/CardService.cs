@@ -73,10 +73,18 @@ namespace MagicTracker.Services
             foreach (var card in tempCardNames)
             {
                 if(card == "") { continue; }
-                if (Char.IsDigit(card[0]))
+                if (Char.IsDigit(card[0]) && (Char.IsDigit(card[1]) == false))
                 {
                     int count = int.Parse(Char.ToString(card[0]));
                     var reducedCard = card.Remove(0, 1);
+                    var finalCard = reducedCard.Trim();
+                    tempCardList.Add(finalCard);
+                    tempCardDict.Add(finalCard, count);
+                }
+                else if (Char.IsDigit(card[0]) && (Char.IsDigit(card[1])))
+                {
+                    int count = int.Parse(Char.ToString(card[0]) + Char.ToString(card[1]));
+                    var reducedCard = card.Remove(0, 2);
                     var finalCard = reducedCard.Trim();
                     tempCardList.Add(finalCard);
                     tempCardDict.Add(finalCard, count);
@@ -87,8 +95,12 @@ namespace MagicTracker.Services
                     tempCardDict.Add(card, 1);
                 }
             }
-
-            var tempStringListNames = String.Join("|", tempCardList.ToArray());
+            List<string> tempDeckList = new List<string>();
+            foreach(var card in tempCardDict)
+            {
+                tempDeckList.Add(card.Value + " " + card.Key);
+            }
+            var tempStringListNames = String.Join("|", tempDeckList.ToArray());
 
             string[] cardNames = tempCardList.ToArray();
 
@@ -128,9 +140,8 @@ namespace MagicTracker.Services
                     }
                 }
 
-
                 string newCardsForApiString;
-                if (newCardsForApi.Count < 15)
+                if (newCardsForApi.Count < 10)
                 {
                     newCardsForApiString = String.Join("|", newCardsForApi.ToArray());
                     FindCardListWithApi(newCardsForApiString);
@@ -141,7 +152,7 @@ namespace MagicTracker.Services
                     foreach(var card in newCardsForApi)
                     {
                         reducedCardList.Add(card);
-                        if(reducedCardList.Count == 15)
+                        if(reducedCardList.Count == 10)
                         {
                             newCardsForApiString = String.Join("|", reducedCardList.ToArray());
                             FindCardListWithApi(newCardsForApiString);
@@ -179,8 +190,6 @@ namespace MagicTracker.Services
                     }
                 }
 
-
-
                 entity.ListOfCards = JsonConvert.SerializeObject(deckList);
                 ctx.Decks.Add(entity);
                 if (addedCount == ctx.SaveChanges())
@@ -198,6 +207,32 @@ namespace MagicTracker.Services
                 var query = ctx
                     .Cards
                     .Where(e => e.OwnerId == _userId)
+                    .Select(
+                        e =>
+                            new CollectionItem
+                            {
+                                CardId = e.CardId,
+                                Name = e.Name,
+                                Printing = e.Printing,
+                                MultiverseId = e.MultiverseId,
+                                CardCondition = e.CardCondition,
+                                IsFoil = e.IsFoil,
+                                InUse = e.InUse,
+                                ForTrade = e.ForTrade,
+                                DeckId = e.DeckId,
+                                CardApiId = e.CardApiId
+                            }
+                    );
+                return query.ToArray();
+            }
+        }
+        public IEnumerable<CollectionItem> GetAvailable()
+        {
+            using (var ctx = new ApplicationDbContext())
+            {
+                var query = ctx
+                    .Cards
+                    .Where(e => e.OwnerId == _userId && e.DeckId == null)
                     .Select(
                         e =>
                             new CollectionItem
@@ -252,14 +287,24 @@ namespace MagicTracker.Services
                 var entity = ctx
                     .Decks
                     .Single(e => e.OwnerId == _userId && e.DeckId == id);
-                return
-                    new DeckItem
-                    {
-                        DeckId = entity.DeckId,
-                        Name = entity.Name,
-                        OwnerId = entity.OwnerId,
-                        CardListString = entity.CardListString
-                    };
+                if (entity != null)
+                {
+                    return
+                        new DeckItem
+                        {
+                            DeckId = entity.DeckId,
+                            Name = entity.Name,
+                            OwnerId = entity.OwnerId,
+                            CardListString = entity.CardListString
+                        };
+                }else return
+                        new DeckItem
+                        {
+                            DeckId = -1,
+                            Name = "No Deck",
+                            OwnerId = _userId,
+                            CardListString = ""
+                        };
             }
 
         }
@@ -294,6 +339,25 @@ namespace MagicTracker.Services
                     }
                 }
                 return apiDict;
+            }
+        }
+
+        public Dictionary<string, int> GetAllDecksDictionary()
+        {
+            Dictionary<string, int> deckDict = new Dictionary<string, int>();
+
+            using (var ctx = new ApplicationDbContext())
+            {
+                var entity = ctx
+                    .Decks
+                    .Where(e => e.OwnerId == _userId)
+                    .OrderBy(e => e.Name);
+                deckDict.Add("-No Deck-", -1);
+                foreach(var deck in entity)
+                {
+                    deckDict.Add(deck.Name, deck.DeckId);
+                }
+                return deckDict;
             }
         }
 
