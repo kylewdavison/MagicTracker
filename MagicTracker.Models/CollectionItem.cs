@@ -10,6 +10,7 @@ namespace MagicTracker.Models
 {
     public class CollectionItem
     {
+        [Display(Name = "Card ID")]
         public int CardId { get; set; }
         public string Name { get; set; }
         public string Printing { get; set; }

@@ -24,6 +24,7 @@ namespace MagicTracker.Services
             _userId = userId;
         }
 
+
         public int CreateCard(CardCreate model)
         {
             var apiId = CheckIfCardApiExists(model.CardName);
@@ -58,148 +59,6 @@ namespace MagicTracker.Services
             }
         }
 
-        public int CreateDeck(DeckCreate model)
-        {
-            if (model.CardListString == null) { return -1; }
-            List<string> tempCardList = new List<string>();
-            List<string> newCardsForApi = new List<string>();
-            Dictionary<string, int> tempCardDict = new Dictionary<string, int>();
-            List<int> deckList = new List<int>();
-
-            string[] tempCardNames = model.CardListString.Split('\n');
-            tempCardNames = (from c in tempCardNames
-                             select c.Trim()).ToArray();
-
-            foreach (var card in tempCardNames)
-            {
-                if(card == "") { continue; }
-                if (Char.IsDigit(card[0]) && (Char.IsDigit(card[1]) == false))
-                {
-                    int count = int.Parse(Char.ToString(card[0]));
-                    var reducedCard = card.Remove(0, 1);
-                    var finalCard = reducedCard.Trim();
-                    tempCardList.Add(finalCard);
-                    tempCardDict.Add(finalCard, count);
-                }
-                else if (Char.IsDigit(card[0]) && (Char.IsDigit(card[1])))
-                {
-                    int count = int.Parse(Char.ToString(card[0]) + Char.ToString(card[1]));
-                    var reducedCard = card.Remove(0, 2);
-                    var finalCard = reducedCard.Trim();
-                    tempCardList.Add(finalCard);
-                    tempCardDict.Add(finalCard, count);
-                }
-                else
-                {
-                    tempCardList.Add(card);
-                    tempCardDict.Add(card, 1);
-                }
-            }
-            List<string> tempDeckList = new List<string>();
-            foreach(var card in tempCardDict)
-            {
-                tempDeckList.Add(card.Value + " " + card.Key);
-            }
-            var tempStringListNames = String.Join("|", tempDeckList.ToArray());
-
-            string[] cardNames = tempCardList.ToArray();
-
-            int addedCount = 1;
-            var entity = new Deck()
-            {
-                OwnerId = _userId,
-                CardListString = tempStringListNames,
-                Name = model.Name
-            };
-
-            using (var ctx = new ApplicationDbContext())
-            {
-                foreach (var card in cardNames)
-                {
-                    if (card != "")
-                    {
-                        var apiId = CheckIfCardApiExists(card);
-                        if (apiId == 0)
-                        {
-                            newCardsForApi.Add(card);
-                            continue;
-                        }
-                        for (int i = 0; i < tempCardDict[card]; i++)
-                        {
-                            var cardObject = new Card()
-                            {
-                                OwnerId = _userId,
-                                Name = card,
-                                DeckId = entity.DeckId,
-                                CardApiId = apiId
-                            };
-                            ctx.Cards.Add(cardObject);
-                            deckList.Add(cardObject.CardId);
-                            addedCount += 1;
-                        }
-                    }
-                }
-
-                string newCardsForApiString;
-                if (newCardsForApi.Count < 10)
-                {
-                    newCardsForApiString = String.Join("|", newCardsForApi.ToArray());
-                    FindCardListWithApi(newCardsForApiString);
-                }
-                else
-                {
-                    var reducedCardList = new List<string>();
-                    foreach(var card in newCardsForApi)
-                    {
-                        reducedCardList.Add(card);
-                        if(reducedCardList.Count == 10)
-                        {
-                            newCardsForApiString = String.Join("|", reducedCardList.ToArray());
-                            FindCardListWithApi(newCardsForApiString);
-                            reducedCardList.Clear();
-                        }
-                    }
-                    newCardsForApiString = String.Join("|", reducedCardList.ToArray());
-                    FindCardListWithApi(newCardsForApiString);
-                }
-
-                
-
-                if (newCardsForApi.Count > 0)
-                {
-                    foreach (var card in newCardsForApi)
-                    {
-                        var apiId = CheckIfCardApiExists(card);
-                        if (apiId == 0)
-                        {
-                            continue;
-                        }
-                        for (int i = 0; i < tempCardDict[card]; i++)
-                        {
-                            var cardObject = new Card()
-                            {
-                                OwnerId = _userId,
-                                Name = card,
-                                DeckId = entity.DeckId,
-                                CardApiId = apiId
-                            };
-                            ctx.Cards.Add(cardObject);
-                            deckList.Add(cardObject.CardId);
-                            addedCount += 1;
-                        }
-                    }
-                }
-
-                entity.ListOfCards = JsonConvert.SerializeObject(deckList);
-                ctx.Decks.Add(entity);
-                if (addedCount == ctx.SaveChanges())
-                {
-                    return entity.DeckId;
-                }
-                return -1;
-            }
-        }
-
         public IEnumerable<CollectionItem> GetCollection()
         {
             using (var ctx = new ApplicationDbContext())
@@ -226,6 +85,7 @@ namespace MagicTracker.Services
                 return query.ToArray();
             }
         }
+
         public IEnumerable<CollectionItem> GetAvailable()
         {
             using (var ctx = new ApplicationDbContext())
@@ -253,61 +113,70 @@ namespace MagicTracker.Services
             }
         }
 
-        public IEnumerable<CollectionItem> GetDeck(int id)
+        public CollectionItem GetCardById(int id)
         {
             using (var ctx = new ApplicationDbContext())
             {
-                var query = ctx
-                    .Cards
-                    .Where(e => e.OwnerId == _userId && e.DeckId == id)
-                    .Select(
-                        e =>
-                            new CollectionItem
-                            {
-                                CardId = e.CardId,
-                                Name = e.Name,
-                                Printing = e.Printing,
-                                MultiverseId = e.MultiverseId,
-                                CardCondition = e.CardCondition,
-                                IsFoil = e.IsFoil,
-                                InUse = e.InUse,
-                                ForTrade = e.ForTrade,
-                                CardApiId = e.CardApiId,
-                                DeckId = e.DeckId
-                            }
-                    );
-                return query.ToArray();
+
+                var entity =
+                    ctx
+                        .Cards
+                        .Single(e => e.CardId == id && e.OwnerId == _userId);
+                return
+                    new CollectionItem
+                    {
+                        CardId = entity.CardId,
+                        Name = entity.Name,
+                        Printing = entity.Printing,
+                        CardCondition = entity.CardCondition,
+                        IsFoil = entity.IsFoil,
+                        InUse = entity.InUse,
+                        ForTrade = entity.ForTrade,
+                        MultiverseId = entity.MultiverseId,
+                        DeckId = entity.DeckId,
+                        CardApiId = entity.CardApiId
+                    };
             }
         }
 
-        public DeckItem GetDeckItem(int id)
+        public bool UpdateCard(CardEdit model)
         {
             using (var ctx = new ApplicationDbContext())
             {
                 var entity = ctx
-                    .Decks
-                    .Single(e => e.OwnerId == _userId && e.DeckId == id);
-                if (entity != null)
-                {
-                    return
-                        new DeckItem
-                        {
-                            DeckId = entity.DeckId,
-                            Name = entity.Name,
-                            OwnerId = entity.OwnerId,
-                            CardListString = entity.CardListString
-                        };
-                }else return
-                        new DeckItem
-                        {
-                            DeckId = -1,
-                            Name = "No Deck",
-                            OwnerId = _userId,
-                            CardListString = ""
-                        };
-            }
+                    .Cards
+                    .Single(e => e.CardId == model.CardId && e.OwnerId == _userId);
 
+                entity.Name = model.Name;
+                entity.Printing = model.Printing;
+                entity.CardCondition = (Data.Condition)(int)model.CardCondition;
+                entity.IsFoil = model.IsFoil;
+                entity.InUse = model.InUse;
+                entity.ForTrade = model.ForTrade;
+                entity.MultiverseId = model.MultiverseId;
+                entity.DeckId = model.DeckId;
+                entity.CardApiId = model.CardApiId;
+
+                return ctx.SaveChanges() == 1;
+            }
         }
+
+        public bool DeleteCard(int cardId)
+        {
+            using (var ctx = new ApplicationDbContext())
+            {
+                var entity =
+                    ctx
+                        .Cards
+                        .Single(e => e.CardId == cardId && e.OwnerId == _userId);
+
+                ctx.Cards.Remove(entity);
+
+                return ctx.SaveChanges() == 1;
+            }
+        }
+
+
 
         public Dictionary<int,CardApiItem> GetDeckApiDictionary(IEnumerable<CollectionItem> cardArray)
         {
@@ -342,25 +211,6 @@ namespace MagicTracker.Services
             }
         }
 
-        public Dictionary<string, int> GetAllDecksDictionary()
-        {
-            Dictionary<string, int> deckDict = new Dictionary<string, int>();
-
-            using (var ctx = new ApplicationDbContext())
-            {
-                var entity = ctx
-                    .Decks
-                    .Where(e => e.OwnerId == _userId)
-                    .OrderBy(e => e.Name);
-                deckDict.Add("-No Deck-", -1);
-                foreach(var deck in entity)
-                {
-                    deckDict.Add(deck.Name, deck.DeckId);
-                }
-                return deckDict;
-            }
-        }
-
         public CardApiItem GetCardApiItem(int id)
         {
             using (var ctx = new ApplicationDbContext())
@@ -382,53 +232,6 @@ namespace MagicTracker.Services
                     SetNameDict = entity.SetNameDict
                 };
                 return carpApiTemp;
-            }
-        }
-
-        public IEnumerable<DeckItem> GetAllDeckItems()
-        {
-            using (var ctx = new ApplicationDbContext())
-            {
-                var query = ctx
-                    .Decks
-                    .Where(e => e.OwnerId == _userId)
-                    .Select(
-                        e =>
-                            new DeckItem
-                            {
-                                DeckId = e.DeckId,
-                                Name = e.Name,
-                                OwnerId = e.OwnerId,
-                                CardListString = e.CardListString,
-                            }
-                    );
-                return query.ToArray();
-            }
-        }
-
-        public CollectionItem GetCardById(int id)
-        {
-            using (var ctx = new ApplicationDbContext())
-            {
-
-                var entity =
-                    ctx
-                        .Cards
-                        .Single(e => e.CardId == id && e.OwnerId == _userId);
-                return
-                    new CollectionItem
-                    {
-                        CardId = entity.CardId,
-                        Name = entity.Name,
-                        Printing = entity.Printing,
-                        CardCondition = entity.CardCondition,
-                        IsFoil = entity.IsFoil,
-                        InUse = entity.InUse,
-                        ForTrade = entity.ForTrade,
-                        MultiverseId = entity.MultiverseId,
-                        DeckId = entity.DeckId,
-                        CardApiId = entity.CardApiId
-                    };
             }
         }
 
@@ -462,7 +265,7 @@ namespace MagicTracker.Services
                         if (tempSetNameDict.ContainsKey(result.Set) == false)
                         {
                             tempSetNameDict.Add(result.Set, result.SetName);
-                            if(result.MultiverseId != null)
+                            if (result.MultiverseId != null)
                             {
                                 tempMultiSetDict.Add(result.Set, result.MultiverseId.Value);
                             }
@@ -521,7 +324,7 @@ namespace MagicTracker.Services
                                 if (tempSetNameDict.ContainsKey(result.Set) == false)
                                 {
                                     tempSetNameDict.Add(result.Set, result.SetName);
-                                    if(result.MultiverseId != null)
+                                    if (result.MultiverseId != null)
                                     {
                                         tempMultiSetDict.Add(result.Set, result.MultiverseId.Value);
                                     }
@@ -572,40 +375,244 @@ namespace MagicTracker.Services
             }
         }
 
-        public bool UpdateCard(CardEdit model)
+
+
+        public IEnumerable<DeckItem> GetAllDeckItems()
+        {
+            using (var ctx = new ApplicationDbContext())
+            {
+                var query = ctx
+                    .Decks
+                    .Where(e => e.OwnerId == _userId)
+                    .Select(
+                        e =>
+                            new DeckItem
+                            {
+                                DeckId = e.DeckId,
+                                Name = e.Name,
+                                OwnerId = e.OwnerId,
+                                CardListString = e.CardListString,
+                            }
+                    );
+                return query.ToArray();
+            }
+        }
+
+        public IEnumerable<CollectionItem> GetDeck(int id)
+        {
+            using (var ctx = new ApplicationDbContext())
+            {
+                var query = ctx
+                    .Cards
+                    .Where(e => e.OwnerId == _userId && e.DeckId == id)
+                    .Select(
+                        e =>
+                            new CollectionItem
+                            {
+                                CardId = e.CardId,
+                                Name = e.Name,
+                                Printing = e.Printing,
+                                MultiverseId = e.MultiverseId,
+                                CardCondition = e.CardCondition,
+                                IsFoil = e.IsFoil,
+                                InUse = e.InUse,
+                                ForTrade = e.ForTrade,
+                                CardApiId = e.CardApiId,
+                                DeckId = e.DeckId
+                            }
+                    );
+                return query.ToArray();
+            }
+        }
+
+        public Dictionary<string, int> GetAllDecksDictionary()
+        {
+            Dictionary<string, int> deckDict = new Dictionary<string, int>();
+
+            using (var ctx = new ApplicationDbContext())
+            {
+                var entity = ctx
+                    .Decks
+                    .Where(e => e.OwnerId == _userId)
+                    .OrderBy(e => e.Name);
+                deckDict.Add("-No Deck-", -1);
+                foreach (var deck in entity)
+                {
+                    deckDict.Add(deck.Name, deck.DeckId);
+                }
+                return deckDict;
+            }
+        }
+
+        public DeckItem GetDeckItem(int id)
         {
             using (var ctx = new ApplicationDbContext())
             {
                 var entity = ctx
-                    .Cards
-                    .Single(e => e.CardId == model.CardId && e.OwnerId == _userId);
-
-                entity.Name = model.Name;
-                entity.Printing = model.Printing;
-                entity.CardCondition = (Data.Condition)(int)model.CardCondition;
-                entity.IsFoil = model.IsFoil;
-                entity.InUse = model.InUse;
-                entity.ForTrade = model.ForTrade;
-                entity.MultiverseId = model.MultiverseId;
-                entity.DeckId = model.DeckId;
-                entity.CardApiId = model.CardApiId;
-
-                return ctx.SaveChanges() == 1;
+                    .Decks
+                    .Single(e => e.OwnerId == _userId && e.DeckId == id);
+                if (entity != null)
+                {
+                    return
+                        new DeckItem
+                        {
+                            DeckId = entity.DeckId,
+                            Name = entity.Name,
+                            OwnerId = entity.OwnerId,
+                            CardListString = entity.CardListString
+                        };
+                }
+                else return
+                       new DeckItem
+                       {
+                           DeckId = -1,
+                           Name = "No Deck",
+                           OwnerId = _userId,
+                           CardListString = ""
+                       };
             }
+
         }
 
-        public bool DeleteCard(int cardId)
+        public int CreateDeck(DeckCreate model)
         {
+            if (model.CardListString == null) { return -1; }
+            List<string> tempCardList = new List<string>();
+            List<string> newCardsForApi = new List<string>();
+            Dictionary<string, int> tempCardDict = new Dictionary<string, int>();
+            List<int> deckList = new List<int>();
+
+            string[] tempCardNames = model.CardListString.Split('\n');
+            tempCardNames = (from c in tempCardNames
+                             select c.Trim()).ToArray();
+
+            foreach (var card in tempCardNames)
+            {
+                if (card == "") { continue; }
+                if (Char.IsDigit(card[0]) && (Char.IsDigit(card[1]) == false))
+                {
+                    int count = int.Parse(Char.ToString(card[0]));
+                    var reducedCard = card.Remove(0, 1);
+                    var finalCard = reducedCard.Trim();
+                    tempCardList.Add(finalCard);
+                    tempCardDict.Add(finalCard, count);
+                }
+                else if (Char.IsDigit(card[0]) && (Char.IsDigit(card[1])))
+                {
+                    int count = int.Parse(Char.ToString(card[0]) + Char.ToString(card[1]));
+                    var reducedCard = card.Remove(0, 2);
+                    var finalCard = reducedCard.Trim();
+                    tempCardList.Add(finalCard);
+                    tempCardDict.Add(finalCard, count);
+                }
+                else
+                {
+                    tempCardList.Add(card);
+                    tempCardDict.Add(card, 1);
+                }
+            }
+            List<string> tempDeckList = new List<string>();
+            foreach (var card in tempCardDict)
+            {
+                tempDeckList.Add(card.Value + " " + card.Key);
+            }
+            var tempStringListNames = String.Join("|", tempDeckList.ToArray());
+
+            string[] cardNames = tempCardList.ToArray();
+
+            int addedCount = 1;
+            var entity = new Deck()
+            {
+                OwnerId = _userId,
+                CardListString = tempStringListNames,
+                Name = model.Name
+            };
+
             using (var ctx = new ApplicationDbContext())
             {
-                var entity =
-                    ctx
-                        .Cards
-                        .Single(e => e.CardId == cardId && e.OwnerId == _userId);
+                foreach (var card in cardNames)
+                {
+                    if (card != "")
+                    {
+                        var apiId = CheckIfCardApiExists(card);
+                        if (apiId == 0)
+                        {
+                            newCardsForApi.Add(card);
+                            continue;
+                        }
+                        for (int i = 0; i < tempCardDict[card]; i++)
+                        {
+                            var cardObject = new Card()
+                            {
+                                OwnerId = _userId,
+                                Name = card,
+                                DeckId = entity.DeckId,
+                                CardApiId = apiId
+                            };
+                            ctx.Cards.Add(cardObject);
+                            deckList.Add(cardObject.CardId);
+                            addedCount += 1;
+                        }
+                    }
+                }
 
-                ctx.Cards.Remove(entity);
+                string newCardsForApiString;
+                if (newCardsForApi.Count < 10)
+                {
+                    newCardsForApiString = String.Join("|", newCardsForApi.ToArray());
+                    FindCardListWithApi(newCardsForApiString);
+                }
+                else
+                {
+                    var reducedCardList = new List<string>();
+                    foreach (var card in newCardsForApi)
+                    {
+                        reducedCardList.Add(card);
+                        if (reducedCardList.Count == 10)
+                        {
+                            newCardsForApiString = String.Join("|", reducedCardList.ToArray());
+                            FindCardListWithApi(newCardsForApiString);
+                            reducedCardList.Clear();
+                        }
+                    }
+                    newCardsForApiString = String.Join("|", reducedCardList.ToArray());
+                    FindCardListWithApi(newCardsForApiString);
+                }
 
-                return ctx.SaveChanges() == 1;
+
+
+                if (newCardsForApi.Count > 0)
+                {
+                    foreach (var card in newCardsForApi)
+                    {
+                        var apiId = CheckIfCardApiExists(card);
+                        if (apiId == 0)
+                        {
+                            continue;
+                        }
+                        for (int i = 0; i < tempCardDict[card]; i++)
+                        {
+                            var cardObject = new Card()
+                            {
+                                OwnerId = _userId,
+                                Name = card,
+                                DeckId = entity.DeckId,
+                                CardApiId = apiId
+                            };
+                            ctx.Cards.Add(cardObject);
+                            deckList.Add(cardObject.CardId);
+                            addedCount += 1;
+                        }
+                    }
+                }
+
+                entity.ListOfCards = JsonConvert.SerializeObject(deckList);
+                ctx.Decks.Add(entity);
+                if (addedCount == ctx.SaveChanges())
+                {
+                    return entity.DeckId;
+                }
+                return -1;
             }
         }
 

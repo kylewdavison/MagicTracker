@@ -16,6 +16,15 @@ namespace MagicTracker.Controllers
     [Authorize]
     public class CollectionController : Controller
     {
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        private CardService CreateCardService()
+        {
+            var userId = Guid.Parse(User.Identity.GetUserId());
+            var service = new CardService(userId);
+            return service;
+        }
         // GET: Collection
         public ActionResult Index()
         {
@@ -67,21 +76,7 @@ namespace MagicTracker.Controllers
             return RedirectToAction("Index");
         }
 
-        public ActionResult DeckIndexOld()
-        {
-            var userId = Guid.Parse(User.Identity.GetUserId());
-            var service = new CardService(userId);
-            var model = service.GetAllDeckItems();
-            return View(model);
-        }
 
-        public ActionResult DeckIndex()
-        {
-            var userId = Guid.Parse(User.Identity.GetUserId());
-            var service = new CardService(userId);
-            var model = service.GetAllDeckItems();
-            return View(model);
-        }
 
         //GET
         public ActionResult Create()
@@ -222,13 +217,14 @@ namespace MagicTracker.Controllers
             return RedirectToAction("Index");
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        private CardService CreateCardService()
+
+
+        public ActionResult DeckIndex()
         {
             var userId = Guid.Parse(User.Identity.GetUserId());
             var service = new CardService(userId);
-            return service;
+            var model = service.GetAllDeckItems();
+            return View(model);
         }
 
         public ActionResult DeckCreate()

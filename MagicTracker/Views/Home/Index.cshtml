@@ -3,29 +3,28 @@
 }
 
 <div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="https://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+    <h1>Magic Collection Tracker</h1>
+    <p class="lead">A solution for keeping track of your magic cards and decks.</p>
+    <p><a href=@Url.Action("Index", "Collection") class="btn btn-primary btn-lg">Your Collection &raquo;</a></p>
 </div>
 
 <div class="row">
     <div class="col-md-4">
-        <h2>Getting started</h2>
+        <h2>Your cards</h2>
         <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
+            You can get started by importing individual cards that you own.
         </p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
+        <p><a class="btn btn-default" href=@Url.Action("Create", "Collection")>Import a card now &raquo;</a></p>
     </div>
     <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
+        <h2>Your decks</h2>
+        <p>Import and edit entire deck lists at once!</p>
+        <p><a class="btn btn-default" href=@Url.Action("DeckCreate", "Collection")>Import an entire deck list &raquo;</a></p>
     </div>
     <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
+        <h2>Need Inspiration?</h2>
+        <p>You can find thousands of decklists made by the pros online!  Checkout MTGGoldfish.com for thousands of deck lists. 
+        Simply click download and copy the mainboard of the deck and paste it into the deck importer.</p>
+        <p><a class="btn btn-default" href="https://www.mtggoldfish.com/metagame/standard#paper">Check it out &raquo;</a></p>
     </div>
 </div>

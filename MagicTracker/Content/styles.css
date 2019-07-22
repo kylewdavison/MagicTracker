@@ -1,0 +1,12 @@
+﻿body {
+}
+
+input,
+select,
+textarea {
+    max-width: 500px;
+}
+#test{
+    max-width: 500px;
+    min-width: 400px;
+}
