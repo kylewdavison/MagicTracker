@@ -6,9 +6,9 @@ using System.Web.Mvc;
 
 namespace MagicTracker.Controllers
 {
-    public class CardApiController : Controller
+    public class ApiController : Controller
     {
-        // GET: CardApi
+        // GET: Api
         public ActionResult Index()
         {
             return View();

@@ -38,12 +38,12 @@
                 @Html.DisplayFor(modelItem => item.CardId)
             </td>
             <td>
-                <a href="@Url.Action("Details", "Collection", new {id = item.CardId})" rel="popover" data-img="@imgLink">@Html.DisplayFor(modelItem => item.Name)</a>
+                <a href="@Url.Action("CardDetails", "Collection", new {id = item.CardId})" rel="popover" data-img="@imgLink">@Html.DisplayFor(modelItem => item.Name)</a>
             </td>
             <td>
                 @Html.ActionLink("Edit", "CardEdit", new {id = item.CardId }) |
                 @Html.ActionLink("Details", "CardDetails", new {id = item.CardId}) |
-                @Html.ActionLink("Delete", "Delete", new {id = item.CardId})
+                @Html.ActionLink("Delete", "CardDelete", new {id = item.CardId})
             </td>
         </tr>
     }

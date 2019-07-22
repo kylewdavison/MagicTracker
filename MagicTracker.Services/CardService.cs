@@ -385,7 +385,7 @@ namespace MagicTracker.Services
             }
         }
 
-        public IEnumerable<DeckItem> GetAllDecks()
+        public IEnumerable<DeckItem> GetAllDeckItems()
         {
             using (var ctx = new ApplicationDbContext())
             {

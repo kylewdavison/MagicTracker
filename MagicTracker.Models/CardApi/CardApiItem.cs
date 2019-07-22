@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,6 +11,8 @@ namespace MagicTracker.Models.CardApi
     {
         public int CardApiId { get; set; }
         public string Name { get; set; }
+
+        [Display(Name = "Mana Cost")]
         public string ManaCost { get; set; }
         public string Colors { get; set; }
         public string Type { get; set; }

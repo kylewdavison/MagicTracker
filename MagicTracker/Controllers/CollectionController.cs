@@ -67,11 +67,19 @@ namespace MagicTracker.Controllers
             return RedirectToAction("Index");
         }
 
+        public ActionResult DeckIndexOld()
+        {
+            var userId = Guid.Parse(User.Identity.GetUserId());
+            var service = new CardService(userId);
+            var model = service.GetAllDeckItems();
+            return View(model);
+        }
+
         public ActionResult DeckIndex()
         {
             var userId = Guid.Parse(User.Identity.GetUserId());
             var service = new CardService(userId);
-            var model = service.GetAllDecks();
+            var model = service.GetAllDeckItems();
             return View(model);
         }
 
@@ -186,6 +194,33 @@ namespace MagicTracker.Controllers
 
             return RedirectToAction("Index");
         }
+        
+        [ActionName("CardDelete")]
+        public ActionResult CardDelete(int id)
+        {
+            var service = CreateCardService();
+            ApiCardView model = new ApiCardView();
+            model.Card = service.GetCardById(id);
+            model.Api = service.GetCardApiItem(model.Card.CardApiId.Value);
+            if (model.Card.DeckId != null) { model.DeckName = service.GetDeckItem(model.Card.DeckId.Value).Name; }
+            else model.DeckName = "No Deck";
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ActionName("CardDelete")]
+        [ValidateAntiForgeryToken]
+        public ActionResult CardDeletePost(int id)
+        {
+            var service = CreateCardService();
+
+            service.DeleteCard(id);
+
+            TempData["SaveResult"] = "Your card was deleted";
+
+            return RedirectToAction("Index");
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -228,6 +263,14 @@ namespace MagicTracker.Controllers
             var service = new CardService(userId);
             var model = service.GetDeck(id);
             return View(model);
+        }
+
+        public ActionResult DeckDetailsPartial(int id)
+        {
+            var userId = Guid.Parse(User.Identity.GetUserId());
+            var service = new CardService(userId);
+            var model = service.GetDeck(id);
+            return PartialView("_DeckPartial",model);
         }
 
         public ActionResult DeckEdit(int id)
