@@ -34,7 +34,7 @@ namespace MagicTracker.WebAPI.Controllers
 
             var service = CreateCardService();
 
-            if (service.CreateCard(card) != -1)
+            if (service.CreateCard(card) == -1)
                 return InternalServerError();
 
             return Ok();
