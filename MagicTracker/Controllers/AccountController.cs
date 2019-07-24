@@ -13,6 +13,10 @@ using MagicTracker.Data;
 
 namespace MagicTracker.Controllers
 {
+    #if !DEBUG
+         [RequireHttps]
+
+    #endif
     [Authorize]
     public class AccountController : Controller
     {
